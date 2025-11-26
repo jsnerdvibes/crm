@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev src/server.ts",
+    "dev": "ts-node-dev --respawn --ignore-watch node_modules -- src/server.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "lint": "eslint src/**/*.{ts,tsx,js,jsx} --fix --format stylish",
@@ -16,7 +16,10 @@
   "type": "commonjs",
   "dependencies": {
     "dotenv": "^17.2.3",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "pino": "^10.1.0",
+    "pino-pretty": "^13.1.2",
+    "rotating-file-stream": "^3.2.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

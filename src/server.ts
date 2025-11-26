@@ -1,13 +1,16 @@
-import express, { Request, Response } from 'express';
-import 'dotenv/config';
+import http from "http";
+import { app } from "./app";
+import { config } from "./config";
+import { logger } from "./core/logger";
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const server = http.createServer(app);
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Server is up');
+server.listen(config.PORT, () => {
+  logger.info(`🚀 Server running on port ${config.PORT}`);
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+// Graceful shutdown (optional for now)
+process.on("SIGINT", () => {
+  logger.info("Server shutting down...");
+  process.exit(0);
 });
