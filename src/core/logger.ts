@@ -9,7 +9,7 @@ if (!fs.existsSync(logDir)) {
 }
 
 // Log file path
-const logFile = path.join(logDir, 'app.log');
+const logFile = path.join(logDir, 'app.logs');
 
 // Create Pino logger with file transport
 export const logger = pino(
