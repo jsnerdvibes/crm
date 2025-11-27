@@ -1,5 +1,6 @@
 import express from 'express';
 import { requestLogger } from './middlewares/requestLogger';
+import { errorHandler } from './middlewares/errorHandler';
 
 export const app = express();
 
@@ -13,3 +14,6 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+
+app.use(errorHandler);

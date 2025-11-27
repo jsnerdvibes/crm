@@ -5,8 +5,8 @@ import { logger } from './core/logger';
 
 const server = http.createServer(app);
 
-server.listen(config.PORT, () => {
-  logger.info(`🚀 Server running on port ${config.PORT}`);
+server.listen(config.app.port, () => {
+  logger.info(`🚀 Server running on port ${config.app.port}`);
 });
 
 // Graceful shutdown (optional for now)
