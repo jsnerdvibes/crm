@@ -6,9 +6,9 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'SaaS CRM API',
+      title: 'CRM API',
       version: '1.0.0',
-      description: 'API Documentation for the SaaS CRM',
+      description: 'API Documentation for CRM',
     },
     servers: [
       {

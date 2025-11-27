@@ -46,21 +46,92 @@ export class AuthController {
    *             schema:
    *               type: object
    *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "success"
    *                 message:
    *                   type: string
-   *                 tenantId:
-   *                   type: string
-   *                 adminUserId:
-   *                   type: string
+   *                   example: "Tenant and Admin created successfully"
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     tenantId:
+   *                       type: string
+   *                       example: "e23a966d-ae67-4b48-93f2-11f65457b274"
+   *                     adminUserId:
+   *                       type: string
+   *                       example: "a602989a-8939-4237-bb7c-c91d3ea68795"
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
    *       400:
-   *         description: Bad request / validation error
+   *         description: Bad request (e.g., duplicate tenant)
    *         content:
    *           application/json:
    *             schema:
    *               type: object
    *               properties:
-   *                 error:
+   *                 status:
    *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Tenant with this name already exists"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       422:
+   *         description: Unprocessable Entity (validation errors)
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Validation failed"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       field:
+   *                         type: string
+   *                         example: "email"
+   *                       message:
+   *                         type: string
+   *                         example: "Valid email is required"
+   *       500:
+   *         description: Internal Server Error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Something went wrong"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
    */
 
   register = async (req: Request, res: Response, next: NextFunction) => {
