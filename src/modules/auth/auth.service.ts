@@ -1,26 +1,29 @@
 import { IAuthRepository } from './auth.repo.interface';
 import bcrypt from 'bcrypt';
+import { RegisterDTO, RegisterResponse } from './dto';
+import { BadRequestError } from '../../core/error';
 
 export class AuthService {
   constructor(private repo: IAuthRepository) {}
 
-  async register(data: {
-    tenantName: string;
-    email: string;
-    password: string;
-  }) {
+  async register(data: RegisterDTO): Promise<RegisterResponse> {
     const slug = data.tenantName.toLowerCase().replace(/\s+/g, '-');
 
-    // Create tenant
-    const tenant = await this.repo.createTenant(data.tenantName, slug);
+    let tenant;
+    try {
+      tenant = await this.repo.createTenant(data.tenantName, slug);
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        throw new BadRequestError('Tenant with this name already exists');
+      }
+      throw error;
+    }
 
-    // Hash password
     const passwordHash = await bcrypt.hash(
       data.password,
       Number(process.env.BCRYPT_SALT_ROUNDS)
     );
 
-    // Create admin user
     const admin = await this.repo.createUser(
       tenant.id,
       data.email,
@@ -28,10 +31,8 @@ export class AuthService {
       'ADMIN'
     );
 
-    // Create default settings
     await this.repo.createDefaultSettings(tenant.id);
 
-    // Return success
     return {
       message: 'Tenant + Admin created successfully',
       tenantId: tenant.id,

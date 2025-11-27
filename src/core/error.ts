@@ -37,3 +37,12 @@ export class ForbiddenError extends AppError {
     super(message, 403);
   }
 }
+
+export class UnprocessableEntityError extends AppError {
+  public errors: any[];
+
+  constructor(message = 'Unprocessable Entity', errors: any[] = []) {
+    super(message, 422);
+    this.errors = errors;
+  }
+}

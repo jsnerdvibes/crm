@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../core/error';
+import { errorResponse } from '../utils/response';
 
 export function errorHandler(
   err: Error | AppError,
@@ -7,21 +8,22 @@ export function errorHandler(
   res: Response,
   next: NextFunction
 ) {
-  console.error(err); // optional: integrate with logger
+  // Log error (can replace with pino/winston)
+  console.error(err);
 
-  // Default error values
   let statusCode = 500;
   let message = 'Something went wrong';
+  let errors: any[] = [];
 
   if (err instanceof AppError) {
     statusCode = err.statusCode;
     message = err.message;
+    const errors = (err as any).errors || [];
+    return res.status(statusCode).json({
+      ...errorResponse(message, errors),
+      ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    });
   }
 
-  res.status(statusCode).json({
-    success: false,
-    message,
-    // optionally include stack in dev
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
-  });
+  res.status(statusCode).json(errorResponse(message, errors));
 }
