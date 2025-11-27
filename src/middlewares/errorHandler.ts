@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { AppError } from "../core/error";
+import { Request, Response, NextFunction } from 'express';
+import { AppError } from '../core/error';
 
 export function errorHandler(
   err: Error | AppError,
@@ -11,7 +11,7 @@ export function errorHandler(
 
   // Default error values
   let statusCode = 500;
-  let message = "Something went wrong";
+  let message = 'Something went wrong';
 
   if (err instanceof AppError) {
     statusCode = err.statusCode;
@@ -22,6 +22,6 @@ export function errorHandler(
     success: false,
     message,
     // optionally include stack in dev
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 }

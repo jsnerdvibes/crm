@@ -1,7 +1,7 @@
 // src/modules/auth/auth.repo.interface.ts
 
-import { BatchPayload } from "../../../generated/prisma/internal/prismaNamespace";
-import { User, Tenant, Role } from "../../core/db";
+import { BatchPayload } from '../../../generated/prisma/internal/prismaNamespace';
+import { User, Tenant, Role } from '../../core/db';
 
 export interface IAuthRepository {
   createTenant(name: string, slug: string): Promise<Tenant>;

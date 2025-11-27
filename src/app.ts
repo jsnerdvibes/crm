@@ -1,17 +1,14 @@
 import express from 'express';
 import { requestLogger } from './middlewares/requestLogger';
 import { errorHandler } from './middlewares/errorHandler';
-import authRoutes from "./modules/auth/auth.routes";
+import authRoutes from './modules/auth/auth.routes';
 
 export const app = express();
 
 app.use(express.json());
 app.use(requestLogger);
 
-
-
-app.use("/auth", authRoutes);
-
+app.use('/auth', authRoutes);
 
 // --- Health Route ---
 app.get('/health', (req, res) => {
@@ -20,6 +17,5 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
-
 
 app.use(errorHandler);
