@@ -14,7 +14,7 @@ export class AuthController {
 
   /**
    * @swagger
-   * /auth/register:
+   * /api/v1/auth/register:
    *   post:
    *     summary: Register a new tenant and admin user
    *     tags: [Auth]

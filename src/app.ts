@@ -1,10 +1,8 @@
 import express from 'express';
 import { requestLogger } from './middlewares/requestLogger';
 import { errorHandler } from './middlewares/errorHandler';
-import authRoutes from './modules/auth/auth.routes';
 import { setupSwagger } from './core/swagger';
-import { RegisterSchema } from './modules/auth/dto';
-import { validate } from './middlewares/validate';
+import { apiRoutes } from './routes/api.routes';
 
 export const app = express();
 
@@ -13,7 +11,7 @@ app.use(requestLogger);
 
 setupSwagger(app);
 
-app.use('/auth', validate(RegisterSchema), authRoutes);
+app.use('/api/v1', apiRoutes);
 
 // --- Health Route ---
 app.get('/health', (req, res) => {

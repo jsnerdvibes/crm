@@ -1,6 +1,7 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { Express } from 'express';
+import { config } from '../config';
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -12,7 +13,7 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: `http://localhost:${process.env.PORT}`,
+        url: `http://localhost:${config.app.port}`,
       },
     ],
   },
@@ -22,5 +23,5 @@ const options: swaggerJsdoc.Options = {
 const specs = swaggerJsdoc(options);
 
 export const setupSwagger = (app: Express) => {
-  app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
+  app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(specs));
 };
