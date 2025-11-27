@@ -18,6 +18,10 @@ const envSchema = z.object({
   JWT_SECRET: z.string().min(16, "JWT_SECRET must be at least 16 characters long"),
 
   TENANCY_MODE: z.enum(["schema", "field"]).default("schema"),
+
+
+  BCRYPT_SALT_ROUNDS: z.string().default("10"),
+
 });
 
 
@@ -38,6 +42,10 @@ export const config = {
     env: env.NODE_ENV,
     port: Number(env.PORT),
   },
+
+bcrypt: {
+  saltRounds: Number(env.BCRYPT_SALT_ROUNDS),
+},
 
 database: {
   host: env.DATABASE_HOST,
