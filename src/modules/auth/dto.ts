@@ -24,3 +24,10 @@ export const LoginSchema = z.object({
 
 export type LoginDTO = z.infer<typeof LoginSchema>;
 
+
+
+export const RefreshTokenSchema = z.object({
+  refreshToken: z.string().min(1, { message: 'Refresh token is required' }),
+});
+
+export type RefreshTokenDTO = z.infer<typeof RefreshTokenSchema>;

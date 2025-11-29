@@ -12,3 +12,12 @@ export async function comparePassword(
 ): Promise<boolean> {
   return bcrypt.compare(password, hashed);
 }
+
+
+export async function hashToken(token: string): Promise<string> {
+  return bcrypt.hash(token, SALT_ROUNDS);
+}
+
+export async function compareToken(token: string, hashed: string): Promise<boolean> {
+  return bcrypt.compare(token, hashed);
+}

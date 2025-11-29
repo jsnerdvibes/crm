@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { z } from 'zod';
+import { logger } from '../core/logger';
 
 // Load env
 dotenv.config();
@@ -20,6 +21,9 @@ const envSchema = z.object({
   JWT_SECRET: z
     .string()
     .min(16, 'JWT_SECRET must be at least 16 characters long'),
+  JWT_REFRESH_SECRET: z
+    .string()
+    .min(16, 'JWT_SECRET must be at least 16 characters long'),
   JWT_EXPIRES_IN: z.string().default('15m'),
 
   TENANCY_MODE: z.enum(['schema', 'field']).default('schema'),
@@ -30,9 +34,9 @@ const envSchema = z.object({
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  console.error('Invalid environment variables:');
-  console.error(parsed.error.toString());
-  console.error(parsed.error.issues);
+  logger.error('Invalid environment variables:');
+  logger.error(parsed.error.toString());
+  logger.error(parsed.error.issues);
   process.exit(1);
 }
 
@@ -58,6 +62,7 @@ export const config = {
 
   jwt: {
     secret: env.JWT_SECRET,
+    refreshSecret: env.JWT_REFRESH_SECRET,
     expiresIn: env.JWT_EXPIRES_IN
   },
 

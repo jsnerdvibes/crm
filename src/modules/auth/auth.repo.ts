@@ -1,4 +1,5 @@
 import { prisma, Role } from '../../core/db';
+import { logger } from '../../core/logger';
 import { IAuthRepository } from './auth.repo.interface';
 
 export const DEFAULT_SETTINGS = [
@@ -36,4 +37,41 @@ export class AuthRepository implements IAuthRepository {
       data: DEFAULT_SETTINGS.map((setting) => ({ ...setting, tenantId })),
     });
   }
+
+  // Save refresh token
+async saveRefreshToken(userId: string, token: string, expiresAt: Date) {
+  return prisma.refreshToken.create({
+    data: { userId, token, expiresAt }
+  });
+}
+
+
+async findRefreshToken(token: string) {
+  return prisma.refreshToken.findFirst({
+    where: {
+      token,
+      expiresAt: { gte: new Date() }, // only non-expired tokens
+    },
+    include: {
+      user: true, // <--- include the related user
+    },
+  });
+}
+
+
+// Revoke refresh token by id (delete)
+async revokeRefreshToken(id: string) {
+  await prisma.refreshToken.delete({ where: { id } });
+}
+
+// Revoke refresh token by token string (delete)
+async revokeRefreshTokenByToken(token: string) {
+
+  const result = await prisma.refreshToken.deleteMany({ where: { token } });
+
+  return result.count
+}
+
+
+
 }
