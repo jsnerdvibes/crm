@@ -20,6 +20,7 @@ const envSchema = z.object({
   JWT_SECRET: z
     .string()
     .min(16, 'JWT_SECRET must be at least 16 characters long'),
+  JWT_EXPIRES_IN: z.string().default('15m'),
 
   TENANCY_MODE: z.enum(['schema', 'field']).default('schema'),
 
@@ -57,6 +58,7 @@ export const config = {
 
   jwt: {
     secret: env.JWT_SECRET,
+    expiresIn: env.JWT_EXPIRES_IN
   },
 
   tenancy: {

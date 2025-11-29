@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const RegisterSchema = z.object({
   tenantName: z.string().min(1, { message: 'Tenant name is required' }),
-  email: z.string().email({ message: 'Valid email is required' }),
+  email: z.email({ message: 'Valid email is required' }),
   password: z
     .string()
     .min(6, { message: 'Password must be at least 6 characters' }),
@@ -15,3 +15,12 @@ export interface RegisterResponse {
   tenantId: string;
   adminUserId: string;
 }
+
+
+export const LoginSchema = z.object({
+  email: z.email({ message: 'Valid email is required' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+});
+
+export type LoginDTO = z.infer<typeof LoginSchema>;
+
