@@ -1,5 +1,4 @@
 import { prisma, Role } from '../../core/db';
-import { logger } from '../../core/logger';
 import { IAuthRepository } from './auth.repo.interface';
 
 export const DEFAULT_SETTINGS = [

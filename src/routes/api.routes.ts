@@ -1,13 +1,20 @@
 import { Router } from 'express';
 import authRoutes from '../modules/auth/auth.routes';
+import userRoutes from '../modules/users/users.routes';
 import { AuthRequest } from '../types/authRequest';
 import { authenticate } from '../middlewares/auth';
 import { requiresAdmin } from '../middlewares/rbac';
 
 export const apiRoutes = Router();
 
-// Mount Auth module
+
+// Auth Routes
 apiRoutes.use('/auth', authRoutes);
+
+
+// User Routes
+apiRoutes.use('/users', userRoutes);
+
 
 // Future modules
 // apiRoutes.use('/users', userRoutes);
