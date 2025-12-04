@@ -7,14 +7,11 @@ import { requiresAdmin } from '../middlewares/rbac';
 
 export const apiRoutes = Router();
 
-
 // Auth Routes
 apiRoutes.use('/auth', authRoutes);
 
-
 // User Routes
 apiRoutes.use('/users', userRoutes);
-
 
 // Future modules
 // apiRoutes.use('/users', userRoutes);

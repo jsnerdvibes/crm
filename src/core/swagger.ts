@@ -11,6 +11,20 @@ const options: swaggerJsdoc.Options = {
       version: '1.0.0',
       description: 'API Documentation for CRM',
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT', // optional, for clarity
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [], // apply globally
+      },
+    ],
     servers: [
       {
         url: `http://localhost:${config.app.port}`,

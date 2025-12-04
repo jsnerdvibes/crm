@@ -1,5 +1,5 @@
-import { prisma, Role, User } from "../../core/db";
-import { IUsersRepository } from "./users.repo.interface";
+import { prisma, Role, User } from '../../core/db';
+import { IUsersRepository } from './users.repo.interface';
 
 export class UsersRepository implements IUsersRepository {
   // Create a new user in the tenant
@@ -48,7 +48,7 @@ export class UsersRepository implements IUsersRepository {
         tenantId,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
   }
@@ -65,18 +65,20 @@ export class UsersRepository implements IUsersRepository {
       isActive: boolean;
     }>
   ): Promise<User> {
-    return prisma.user.updateMany({
-      where: {
-        id: userId,
-        tenantId,
-      },
-      data,
-    }).then(async () => {
-      // return updated user
-      const user = await this.findById(tenantId, userId);
-      if (!user) throw new Error("User not found");
-      return user;
-    });
+    return prisma.user
+      .updateMany({
+        where: {
+          id: userId,
+          tenantId,
+        },
+        data,
+      })
+      .then(async () => {
+        // return updated user
+        const user = await this.findById(tenantId, userId);
+        if (!user) throw new Error('User not found');
+        return user;
+      });
   }
 
   // Hard delete user
@@ -102,7 +104,7 @@ export class UsersRepository implements IUsersRepository {
     });
 
     const user = await this.findById(tenantId, userId);
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error('User not found');
     return user;
   }
 }

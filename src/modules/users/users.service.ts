@@ -1,9 +1,13 @@
-import bcrypt from "bcrypt";
-import { IUsersRepository } from "./users.repo.interface";
-import { CreateUserDTO, UpdateUserDTO, UserResponse } from "./dto";
-import { Role, User } from "../../core/db";
-import { BadRequestError, ForbiddenError, NotFoundError } from "../../core/error";
-import { logger } from "../../core/logger";
+import bcrypt from 'bcrypt';
+import { IUsersRepository } from './users.repo.interface';
+import { CreateUserDTO, UpdateUserDTO, UserResponse } from './dto';
+import { Role, User } from '../../core/db';
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} from '../../core/error';
+import { logger } from '../../core/logger';
 
 export class UsersService {
   constructor(private repo: IUsersRepository) {}
@@ -18,7 +22,7 @@ export class UsersService {
     // check if email already exists
     const existing = await this.repo.findByEmail(tenantId, data.email);
     if (existing) {
-      throw new BadRequestError("Email already exists");
+      throw new BadRequestError('Email already exists');
     }
 
     const passwordHash = await bcrypt.hash(
@@ -46,7 +50,7 @@ export class UsersService {
     data: UpdateUserDTO
   ): Promise<UserResponse> {
     const user = await this.repo.findById(tenantId, userId);
-    if (!user) throw new NotFoundError("User not found");
+    if (!user) throw new NotFoundError('User not found');
 
     const updateData: Partial<{
       email: string;
@@ -59,7 +63,7 @@ export class UsersService {
     if (data.email) updateData.email = data.email;
     if (data.name) updateData.name = data.name;
     if (data.role) updateData.role = data.role;
-    if (typeof data.isActive === "boolean") updateData.isActive = data.isActive;
+    if (typeof data.isActive === 'boolean') updateData.isActive = data.isActive;
     if (data.password) {
       updateData.passwordHash = await bcrypt.hash(
         data.password,
@@ -74,34 +78,43 @@ export class UsersService {
   // -------------------------
   // Deactivate user
   // -------------------------
-  async deactivateUser(tenantId: string, userId: string): Promise<UserResponse> {
+  async deactivateUser(
+    tenantId: string,
+    userId: string
+  ): Promise<UserResponse> {
+    const userInfo = await this.repo.findById(tenantId, userId);
+    if (!userInfo) throw new NotFoundError('User not found');
+
+    if (userInfo.role === Role.ADMIN || userInfo.role === Role.SUPER_ADMIN) {
+      throw new ForbiddenError('Admin users cannot be deleted');
+    }
+
     const user = await this.repo.deactivate(tenantId, userId);
     return this.sanitize(user);
   }
 
   // -------------------------
-// Delete user
-// -------------------------
-async delete(tenantId: string, userId: string): Promise<void> {
-  const user = await this.repo.findById(tenantId, userId);
-  if (!user) throw new NotFoundError("User not found");
+  // Delete user
+  // -------------------------
+  async delete(tenantId: string, userId: string): Promise<void> {
+    const user = await this.repo.findById(tenantId, userId);
+    if (!user) throw new NotFoundError('User not found');
 
     if (user.role === Role.ADMIN || user.role === Role.SUPER_ADMIN) {
-    throw new ForbiddenError('Admin users cannot be deleted');
+      throw new ForbiddenError('Admin users cannot be deleted');
+    }
+
+    await this.repo.delete(tenantId, userId);
+
+    logger.info(`User ${userId} deleted successfully from tenant ${tenantId}`);
   }
-
-  await this.repo.delete(tenantId, userId);
-
-  logger.info(`User ${userId} deleted successfully from tenant ${tenantId}`);
-}
-
 
   // -------------------------
   // Get single user
   // -------------------------
   async getUserById(tenantId: string, userId: string): Promise<UserResponse> {
     const user = await this.repo.findById(tenantId, userId);
-    if (!user) throw new NotFoundError("User not found");
+    if (!user) throw new NotFoundError('User not found');
     return this.sanitize(user);
   }
 

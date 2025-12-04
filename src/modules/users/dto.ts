@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { Role } from "../../core/db";
+import { z } from 'zod';
+import { Role } from '../../core/db';
 
 /**
  * Create User DTO
@@ -7,10 +7,12 @@ import { Role } from "../../core/db";
  * tenantId is extracted from JWT, not provided by client.
  */
 export const CreateUserSchema = z.object({
-  email: z.email({ message: "Valid email is required" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  email: z.email({ message: 'Valid email is required' }),
+  password: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters' }),
   name: z.string().optional(),
-  role: z.enum(Role, { message: "Invalid role" }).default(Role.SALES),
+  role: z.enum(Role, { message: 'Invalid role' }).default(Role.SALES),
 });
 
 export type CreateUserDTO = z.infer<typeof CreateUserSchema>;
