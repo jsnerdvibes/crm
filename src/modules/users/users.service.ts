@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { IUsersRepository } from "./users.repo.interface";
 import { CreateUserDTO, UpdateUserDTO, UserResponse } from "./dto";
 import { Role, User } from "../../core/db";
-import { BadRequestError, NotFoundError } from "../../core/error";
+import { BadRequestError, ForbiddenError, NotFoundError } from "../../core/error";
 import { logger } from "../../core/logger";
 
 export class UsersService {
@@ -85,6 +85,10 @@ export class UsersService {
 async delete(tenantId: string, userId: string): Promise<void> {
   const user = await this.repo.findById(tenantId, userId);
   if (!user) throw new NotFoundError("User not found");
+
+    if (user.role === Role.ADMIN || user.role === Role.SUPER_ADMIN) {
+    throw new ForbiddenError('Admin users cannot be deleted');
+  }
 
   await this.repo.delete(tenantId, userId);
 

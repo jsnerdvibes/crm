@@ -17,10 +17,10 @@ import type * as Prisma from "./prismaNamespace"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.0.1",
-  "engineVersion": "f09f2815f091dbba658cdcd2264306d88bb5bda6",
+  "clientVersion": "7.1.0",
+  "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
   "activeProvider": "mysql",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n}\n\nenum Role {\n  SUPER_ADMIN\n  ADMIN\n  MANAGER\n  SALES\n  SUPPORT\n}\n\nenum LeadStatus {\n  NEW\n  CONTACTED\n  QUALIFIED\n  LOST\n}\n\nenum DealStage {\n  QUALIFICATION\n  PROPOSAL\n  NEGOTIATION\n  CLOSED_WON\n  CLOSED_LOST\n}\n\nenum ActivityType {\n  NOTE\n  CALL\n  MEETING\n  TASK\n}\n\nmodel Tenant {\n  id        String   @id @default(uuid())\n  name      String\n  slug      String   @unique\n  createdAt DateTime @default(now())\n\n  users      User[]\n  companies  Company[]\n  contacts   Contact[]\n  leads      Lead[]\n  deals      Deal[]\n  settings   Setting[]\n  activities Activity[]\n  auditLogs  AuditLog[]\n\n  @@index([slug])\n  @@map(\"tenants\")\n}\n\nmodel User {\n  id           String   @id @default(uuid())\n  tenantId     String\n  tenant       Tenant   @relation(fields: [tenantId], references: [id])\n  email        String   @unique\n  passwordHash String\n  name         String?\n  role         Role     @default(SALES)\n  isActive     Boolean  @default(true)\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n\n  refreshTokens RefreshToken[]\n  assignedLeads Lead[]         @relation(\"AssignedLeads\")\n  assignedDeals Deal[]         @relation(\"AssignedDeals\")\n\n  activities Activity[] @relation(\"UserActivities\")\n  auditLogs  AuditLog[] @relation(\"UserAuditLogs\")\n\n  @@index([tenantId])\n  @@index([email])\n  @@map(\"users\")\n}\n\nmodel RefreshToken {\n  id        String   @id @default(uuid())\n  userId    String\n  user      User     @relation(fields: [userId], references: [id])\n  token     String   @unique\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  @@map(\"refresh_tokens\")\n}\n\nmodel Company {\n  id       String @id @default(uuid())\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id])\n\n  name      String\n  website   String?\n  phone     String?\n  address   String?\n  createdAt DateTime @default(now())\n\n  contacts Contact[]\n  deals    Deal[]\n\n  @@index([tenantId])\n  @@index([name])\n  @@map(\"companies\")\n}\n\nmodel Contact {\n  id       String @id @default(uuid())\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id])\n\n  companyId String?\n  company   Company? @relation(fields: [companyId], references: [id])\n\n  firstName String\n  lastName  String?\n  email     String?\n  phone     String?\n  createdAt DateTime @default(now())\n\n  leads Lead[] // <-- back relation for Lead.contact\n\n  @@index([tenantId])\n  @@index([email])\n  @@map(\"contacts\")\n}\n\nmodel Lead {\n  id       String @id @default(uuid())\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id])\n\n  title       String\n  description String?\n  source      String?\n  status      LeadStatus @default(NEW)\n\n  contactId String?\n  contact   Contact? @relation(fields: [contactId], references: [id])\n\n  assignedToId String?\n  assignedTo   User?   @relation(\"AssignedLeads\", fields: [assignedToId], references: [id])\n\n  createdAt DateTime @default(now())\n\n  @@index([tenantId])\n  @@index([status])\n  @@map(\"leads\")\n}\n\nmodel Deal {\n  id       String @id @default(uuid())\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id])\n\n  title       String\n  amount      Float?\n  probability Int?\n  stage       DealStage @default(QUALIFICATION)\n\n  companyId String?\n  company   Company? @relation(fields: [companyId], references: [id])\n\n  assignedToId String?\n  assignedTo   User?   @relation(\"AssignedDeals\", fields: [assignedToId], references: [id])\n\n  createdAt DateTime @default(now())\n\n  @@index([tenantId])\n  @@index([stage])\n  @@map(\"deals\")\n}\n\nmodel Activity {\n  id       String @id @default(uuid())\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id])\n\n  actorId String?\n  actor   User?   @relation(\"UserActivities\", fields: [actorId], references: [id])\n\n  type ActivityType\n\n  targetType String // \"Lead\" | \"Contact\" | \"Deal\" | \"Company\"\n  targetId   String\n\n  body      String?\n  dueAt     DateTime?\n  completed Boolean   @default(false)\n  createdAt DateTime  @default(now())\n\n  @@index([tenantId])\n  @@index([targetType, targetId])\n  @@map(\"activities\")\n}\n\nmodel AuditLog {\n  id       String @id @default(uuid())\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id])\n\n  userId String?\n  user   User?   @relation(\"UserAuditLogs\", fields: [userId], references: [id])\n\n  action     String\n  resource   String\n  resourceId String\n  meta       Json?\n  createdAt  DateTime @default(now())\n\n  @@index([tenantId])\n  @@index([resource, resourceId])\n  @@map(\"auditlogs\")\n}\n\nmodel Setting {\n  id        String   @id @default(uuid())\n  tenantId  String\n  tenant    Tenant   @relation(fields: [tenantId], references: [id])\n  key       String\n  value     String\n  createdAt DateTime @default(now())\n\n  @@unique([tenantId, key])\n  @@map(\"settings\")\n}\n",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n}\n\nenum Role {\n  SUPER_ADMIN\n  ADMIN\n  MANAGER\n  SALES\n  SUPPORT\n}\n\nenum LeadStatus {\n  NEW\n  CONTACTED\n  QUALIFIED\n  LOST\n}\n\nenum DealStage {\n  QUALIFICATION\n  PROPOSAL\n  NEGOTIATION\n  CLOSED_WON\n  CLOSED_LOST\n}\n\nenum ActivityType {\n  NOTE\n  CALL\n  MEETING\n  TASK\n}\n\nmodel Tenant {\n  id        String   @id @default(uuid())\n  name      String\n  slug      String   @unique\n  createdAt DateTime @default(now())\n\n  users      User[]\n  companies  Company[]\n  contacts   Contact[]\n  leads      Lead[]\n  deals      Deal[]\n  settings   Setting[]\n  activities Activity[]\n  auditLogs  AuditLog[]\n\n  @@index([slug])\n  @@map(\"tenants\")\n}\n\nmodel User {\n  id           String   @id @default(uuid())\n  tenantId     String\n  tenant       Tenant   @relation(fields: [tenantId], references: [id])\n  email        String   @unique\n  passwordHash String\n  name         String?\n  role         Role     @default(SALES)\n  isActive     Boolean  @default(true)\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n\n  refreshTokens RefreshToken[]\n  assignedLeads Lead[]         @relation(\"AssignedLeads\")\n  assignedDeals Deal[]         @relation(\"AssignedDeals\")\n\n  activities Activity[] @relation(\"UserActivities\")\n  auditLogs  AuditLog[] @relation(\"UserAuditLogs\")\n\n  @@index([tenantId])\n  @@index([email])\n  @@map(\"users\")\n}\n\nmodel RefreshToken {\n  id        String   @id @default(uuid())\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  token     String   @unique\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  @@map(\"refresh_tokens\")\n}\n\nmodel Company {\n  id       String @id @default(uuid())\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id])\n\n  name      String\n  website   String?\n  phone     String?\n  address   String?\n  createdAt DateTime @default(now())\n\n  contacts Contact[]\n  deals    Deal[]\n\n  @@index([tenantId])\n  @@index([name])\n  @@map(\"companies\")\n}\n\nmodel Contact {\n  id       String @id @default(uuid())\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id])\n\n  companyId String?\n  company   Company? @relation(fields: [companyId], references: [id])\n\n  firstName String\n  lastName  String?\n  email     String?\n  phone     String?\n  createdAt DateTime @default(now())\n\n  leads Lead[] // <-- back relation for Lead.contact\n\n  @@index([tenantId])\n  @@index([email])\n  @@map(\"contacts\")\n}\n\nmodel Lead {\n  id       String @id @default(uuid())\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id])\n\n  title       String\n  description String?\n  source      String?\n  status      LeadStatus @default(NEW)\n\n  contactId String?\n  contact   Contact? @relation(fields: [contactId], references: [id])\n\n  assignedToId String?\n  assignedTo   User?   @relation(\"AssignedLeads\", fields: [assignedToId], references: [id])\n\n  createdAt DateTime @default(now())\n\n  @@index([tenantId])\n  @@index([status])\n  @@map(\"leads\")\n}\n\nmodel Deal {\n  id       String @id @default(uuid())\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id])\n\n  title       String\n  amount      Float?\n  probability Int?\n  stage       DealStage @default(QUALIFICATION)\n\n  companyId String?\n  company   Company? @relation(fields: [companyId], references: [id])\n\n  assignedToId String?\n  assignedTo   User?   @relation(\"AssignedDeals\", fields: [assignedToId], references: [id])\n\n  createdAt DateTime @default(now())\n\n  @@index([tenantId])\n  @@index([stage])\n  @@map(\"deals\")\n}\n\nmodel Activity {\n  id       String @id @default(uuid())\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id])\n\n  actorId String?\n  actor   User?   @relation(\"UserActivities\", fields: [actorId], references: [id])\n\n  type ActivityType\n\n  targetType String // \"Lead\" | \"Contact\" | \"Deal\" | \"Company\"\n  targetId   String\n\n  body      String?\n  dueAt     DateTime?\n  completed Boolean   @default(false)\n  createdAt DateTime  @default(now())\n\n  @@index([tenantId])\n  @@index([targetType, targetId])\n  @@map(\"activities\")\n}\n\nmodel AuditLog {\n  id       String @id @default(uuid())\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id])\n\n  userId String?\n  user   User?   @relation(\"UserAuditLogs\", fields: [userId], references: [id], onDelete: Cascade)\n\n  action     String\n  resource   String\n  resourceId String\n  meta       Json?\n  createdAt  DateTime @default(now())\n\n  @@index([tenantId])\n  @@index([resource, resourceId])\n  @@map(\"auditlogs\")\n}\n\nmodel Setting {\n  id        String   @id @default(uuid())\n  tenantId  String\n  tenant    Tenant   @relation(fields: [tenantId], references: [id])\n  key       String\n  value     String\n  createdAt DateTime @default(now())\n\n  @@unique([tenantId, key])\n  @@map(\"settings\")\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -62,7 +62,7 @@ export interface PrismaClientConstructor {
    * const tenants = await prisma.tenant.findMany()
    * ```
    * 
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+   * Read more in our [docs](https://pris.ly/d/client).
    */
 
   new <
@@ -84,7 +84,7 @@ export interface PrismaClientConstructor {
  * const tenants = await prisma.tenant.findMany()
  * ```
  * 
- * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+ * Read more in our [docs](https://pris.ly/d/client).
  */
 
 export interface PrismaClient<
@@ -113,7 +113,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -125,7 +125,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -136,7 +136,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
 
@@ -148,7 +148,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
 

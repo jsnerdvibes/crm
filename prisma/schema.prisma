@@ -7,184 +7,22 @@ datasource db {
   provider = "mysql"
 }
 
-model activity {
-  id         String        @id
-  tenantId   String
-  actorId    String?
-  type       activity_type
-  targetType String
-  targetId   String
-  body       String?
-  dueAt      DateTime?
-  completed  Boolean       @default(false)
-  createdAt  DateTime      @default(now())
-  user       user?         @relation(fields: [actorId], references: [id], map: "Activity_actorId_fkey")
-  tenant     tenant        @relation(fields: [tenantId], references: [id], map: "Activity_tenantId_fkey")
-
-  @@index([actorId], map: "Activity_actorId_fkey")
-  @@index([targetType, targetId], map: "Activity_targetType_targetId_idx")
-  @@index([tenantId], map: "Activity_tenantId_idx")
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+  SALES
+  SUPPORT
 }
 
-model auditlog {
-  id         String   @id
-  tenantId   String
-  userId     String?
-  action     String
-  resource   String
-  resourceId String
-  meta       Json?
-  createdAt  DateTime @default(now())
-  tenant     tenant   @relation(fields: [tenantId], references: [id], map: "AuditLog_tenantId_fkey")
-  user       user?    @relation(fields: [userId], references: [id], map: "AuditLog_userId_fkey")
-
-  @@index([resource, resourceId], map: "AuditLog_resource_resourceId_idx")
-  @@index([tenantId], map: "AuditLog_tenantId_idx")
-  @@index([userId], map: "AuditLog_userId_fkey")
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  LOST
 }
 
-model company {
-  id        String    @id
-  tenantId  String
-  name      String
-  website   String?
-  phone     String?
-  address   String?
-  createdAt DateTime  @default(now())
-  tenant    tenant    @relation(fields: [tenantId], references: [id], map: "Company_tenantId_fkey")
-  contact   contact[]
-  deal      deal[]
-
-  @@index([name], map: "Company_name_idx")
-  @@index([tenantId], map: "Company_tenantId_idx")
-}
-
-model contact {
-  id        String   @id
-  tenantId  String
-  companyId String?
-  firstName String
-  lastName  String?
-  email     String?
-  phone     String?
-  createdAt DateTime @default(now())
-  company   company? @relation(fields: [companyId], references: [id], map: "Contact_companyId_fkey")
-  tenant    tenant   @relation(fields: [tenantId], references: [id], map: "Contact_tenantId_fkey")
-  lead      lead[]
-
-  @@index([companyId], map: "Contact_companyId_fkey")
-  @@index([email], map: "Contact_email_idx")
-  @@index([tenantId], map: "Contact_tenantId_idx")
-}
-
-model deal {
-  id           String     @id
-  tenantId     String
-  title        String
-  amount       Float?
-  probability  Int?
-  stage        deal_stage @default(QUALIFICATION)
-  companyId    String?
-  assignedToId String?
-  createdAt    DateTime   @default(now())
-  user         user?      @relation(fields: [assignedToId], references: [id], map: "Deal_assignedToId_fkey")
-  company      company?   @relation(fields: [companyId], references: [id], map: "Deal_companyId_fkey")
-  tenant       tenant     @relation(fields: [tenantId], references: [id], map: "Deal_tenantId_fkey")
-
-  @@index([assignedToId], map: "Deal_assignedToId_fkey")
-  @@index([companyId], map: "Deal_companyId_fkey")
-  @@index([stage], map: "Deal_stage_idx")
-  @@index([tenantId], map: "Deal_tenantId_idx")
-}
-
-model lead {
-  id           String      @id
-  tenantId     String
-  title        String
-  description  String?
-  source       String?
-  status       lead_status @default(NEW)
-  contactId    String?
-  assignedToId String?
-  createdAt    DateTime    @default(now())
-  user         user?       @relation(fields: [assignedToId], references: [id], map: "Lead_assignedToId_fkey")
-  contact      contact?    @relation(fields: [contactId], references: [id], map: "Lead_contactId_fkey")
-  tenant       tenant      @relation(fields: [tenantId], references: [id], map: "Lead_tenantId_fkey")
-
-  @@index([assignedToId], map: "Lead_assignedToId_fkey")
-  @@index([contactId], map: "Lead_contactId_fkey")
-  @@index([status], map: "Lead_status_idx")
-  @@index([tenantId], map: "Lead_tenantId_idx")
-}
-
-model refreshtoken {
-  id        String   @id
-  userId    String
-  token     String   @unique(map: "RefreshToken_token_key")
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  user      user     @relation(fields: [userId], references: [id], map: "RefreshToken_userId_fkey")
-
-  @@index([userId], map: "RefreshToken_userId_fkey")
-}
-
-model setting {
-  id        String   @id
-  tenantId  String
-  key       String
-  value     String
-  createdAt DateTime @default(now())
-  tenant    tenant   @relation(fields: [tenantId], references: [id], map: "Setting_tenantId_fkey")
-
-  @@unique([tenantId, key], map: "Setting_tenantId_key_key")
-}
-
-model tenant {
-  id        String     @id
-  name      String
-  slug      String     @unique(map: "Tenant_slug_key")
-  createdAt DateTime   @default(now())
-  activity  activity[]
-  auditlog  auditlog[]
-  company   company[]
-  contact   contact[]
-  deal      deal[]
-  lead      lead[]
-  setting   setting[]
-  user      user[]
-
-  @@index([slug], map: "Tenant_slug_idx")
-}
-
-model user {
-  id           String         @id
-  tenantId     String
-  email        String         @unique(map: "User_email_key")
-  passwordHash String
-  name         String?
-  role         user_role      @default(SALES)
-  isActive     Boolean        @default(true)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime
-  activity     activity[]
-  auditlog     auditlog[]
-  deal         deal[]
-  lead         lead[]
-  refreshtoken refreshtoken[]
-  tenant       tenant         @relation(fields: [tenantId], references: [id], map: "User_tenantId_fkey")
-
-  @@index([email], map: "User_email_idx")
-  @@index([tenantId], map: "User_tenantId_idx")
-}
-
-enum activity_type {
-  NOTE
-  CALL
-  MEETING
-  TASK
-}
-
-enum deal_stage {
+enum DealStage {
   QUALIFICATION
   PROPOSAL
   NEGOTIATION
@@ -192,17 +30,202 @@ enum deal_stage {
   CLOSED_LOST
 }
 
-enum lead_status {
-  NEW
-  CONTACTED
-  QUALIFIED
-  LOST
+enum ActivityType {
+  NOTE
+  CALL
+  MEETING
+  TASK
 }
 
-enum user_role {
-  SUPER_ADMIN
-  ADMIN
-  MANAGER
-  SALES
-  SUPPORT
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+
+  users      User[]
+  companies  Company[]
+  contacts   Contact[]
+  leads      Lead[]
+  deals      Deal[]
+  settings   Setting[]
+  activities Activity[]
+  auditLogs  AuditLog[]
+
+  @@index([slug])
+  @@map("tenants")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  tenantId     String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id])
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         Role     @default(SALES)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  refreshTokens RefreshToken[]
+  assignedLeads Lead[]         @relation("AssignedLeads")
+  assignedDeals Deal[]         @relation("AssignedDeals")
+
+  activities Activity[] @relation("UserActivities")
+  auditLogs  AuditLog[] @relation("UserAuditLogs")
+
+  @@index([tenantId])
+  @@index([email])
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  @@map("refresh_tokens")
+}
+
+model Company {
+  id       String @id @default(uuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+
+  name      String
+  website   String?
+  phone     String?
+  address   String?
+  createdAt DateTime @default(now())
+
+  contacts Contact[]
+  deals    Deal[]
+
+  @@index([tenantId])
+  @@index([name])
+  @@map("companies")
+}
+
+model Contact {
+  id       String @id @default(uuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
+
+  firstName String
+  lastName  String?
+  email     String?
+  phone     String?
+  createdAt DateTime @default(now())
+
+  leads Lead[] // <-- back relation for Lead.contact
+
+  @@index([tenantId])
+  @@index([email])
+  @@map("contacts")
+}
+
+model Lead {
+  id       String @id @default(uuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+
+  title       String
+  description String?
+  source      String?
+  status      LeadStatus @default(NEW)
+
+  contactId String?
+  contact   Contact? @relation(fields: [contactId], references: [id])
+
+  assignedToId String?
+  assignedTo   User?   @relation("AssignedLeads", fields: [assignedToId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([status])
+  @@map("leads")
+}
+
+model Deal {
+  id       String @id @default(uuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+
+  title       String
+  amount      Float?
+  probability Int?
+  stage       DealStage @default(QUALIFICATION)
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
+
+  assignedToId String?
+  assignedTo   User?   @relation("AssignedDeals", fields: [assignedToId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([stage])
+  @@map("deals")
+}
+
+model Activity {
+  id       String @id @default(uuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+
+  actorId String?
+  actor   User?   @relation("UserActivities", fields: [actorId], references: [id])
+
+  type ActivityType
+
+  targetType String // "Lead" | "Contact" | "Deal" | "Company"
+  targetId   String
+
+  body      String?
+  dueAt     DateTime?
+  completed Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  @@index([tenantId])
+  @@index([targetType, targetId])
+  @@map("activities")
+}
+
+model AuditLog {
+  id       String @id @default(uuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+
+  userId String?
+  user   User?   @relation("UserAuditLogs", fields: [userId], references: [id], onDelete: Cascade)
+
+  action     String
+  resource   String
+  resourceId String
+  meta       Json?
+  createdAt  DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([resource, resourceId])
+  @@map("auditlogs")
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  key       String
+  value     String
+  createdAt DateTime @default(now())
+
+  @@unique([tenantId, key])
+  @@map("settings")
 }

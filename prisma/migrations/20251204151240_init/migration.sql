@@ -1,17 +1,17 @@
 -- CreateTable
-CREATE TABLE `Tenant` (
+CREATE TABLE `tenants` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `slug` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX `Tenant_slug_key`(`slug`),
-    INDEX `Tenant_slug_idx`(`slug`),
+    UNIQUE INDEX `tenants_slug_key`(`slug`),
+    INDEX `tenants_slug_idx`(`slug`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `User` (
+CREATE TABLE `users` (
     `id` VARCHAR(191) NOT NULL,
     `tenantId` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
@@ -22,26 +22,26 @@ CREATE TABLE `User` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `User_email_key`(`email`),
-    INDEX `User_tenantId_idx`(`tenantId`),
-    INDEX `User_email_idx`(`email`),
+    UNIQUE INDEX `users_email_key`(`email`),
+    INDEX `users_tenantId_idx`(`tenantId`),
+    INDEX `users_email_idx`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `RefreshToken` (
+CREATE TABLE `refresh_tokens` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `token` VARCHAR(191) NOT NULL,
     `expiresAt` DATETIME(3) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX `RefreshToken_token_key`(`token`),
+    UNIQUE INDEX `refresh_tokens_token_key`(`token`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Company` (
+CREATE TABLE `companies` (
     `id` VARCHAR(191) NOT NULL,
     `tenantId` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
@@ -50,13 +50,13 @@ CREATE TABLE `Company` (
     `address` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    INDEX `Company_tenantId_idx`(`tenantId`),
-    INDEX `Company_name_idx`(`name`),
+    INDEX `companies_tenantId_idx`(`tenantId`),
+    INDEX `companies_name_idx`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Contact` (
+CREATE TABLE `contacts` (
     `id` VARCHAR(191) NOT NULL,
     `tenantId` VARCHAR(191) NOT NULL,
     `companyId` VARCHAR(191) NULL,
@@ -66,13 +66,13 @@ CREATE TABLE `Contact` (
     `phone` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    INDEX `Contact_tenantId_idx`(`tenantId`),
-    INDEX `Contact_email_idx`(`email`),
+    INDEX `contacts_tenantId_idx`(`tenantId`),
+    INDEX `contacts_email_idx`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Lead` (
+CREATE TABLE `leads` (
     `id` VARCHAR(191) NOT NULL,
     `tenantId` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
@@ -83,13 +83,13 @@ CREATE TABLE `Lead` (
     `assignedToId` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    INDEX `Lead_tenantId_idx`(`tenantId`),
-    INDEX `Lead_status_idx`(`status`),
+    INDEX `leads_tenantId_idx`(`tenantId`),
+    INDEX `leads_status_idx`(`status`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Deal` (
+CREATE TABLE `deals` (
     `id` VARCHAR(191) NOT NULL,
     `tenantId` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
@@ -100,13 +100,13 @@ CREATE TABLE `Deal` (
     `assignedToId` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    INDEX `Deal_tenantId_idx`(`tenantId`),
-    INDEX `Deal_stage_idx`(`stage`),
+    INDEX `deals_tenantId_idx`(`tenantId`),
+    INDEX `deals_stage_idx`(`stage`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Activity` (
+CREATE TABLE `activities` (
     `id` VARCHAR(191) NOT NULL,
     `tenantId` VARCHAR(191) NOT NULL,
     `actorId` VARCHAR(191) NULL,
@@ -118,13 +118,13 @@ CREATE TABLE `Activity` (
     `completed` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    INDEX `Activity_tenantId_idx`(`tenantId`),
-    INDEX `Activity_targetType_targetId_idx`(`targetType`, `targetId`),
+    INDEX `activities_tenantId_idx`(`tenantId`),
+    INDEX `activities_targetType_targetId_idx`(`targetType`, `targetId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `AuditLog` (
+CREATE TABLE `auditlogs` (
     `id` VARCHAR(191) NOT NULL,
     `tenantId` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NULL,
@@ -134,67 +134,67 @@ CREATE TABLE `AuditLog` (
     `meta` JSON NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    INDEX `AuditLog_tenantId_idx`(`tenantId`),
-    INDEX `AuditLog_resource_resourceId_idx`(`resource`, `resourceId`),
+    INDEX `auditlogs_tenantId_idx`(`tenantId`),
+    INDEX `auditlogs_resource_resourceId_idx`(`resource`, `resourceId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Setting` (
+CREATE TABLE `settings` (
     `id` VARCHAR(191) NOT NULL,
     `tenantId` VARCHAR(191) NOT NULL,
     `key` VARCHAR(191) NOT NULL,
     `value` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX `Setting_tenantId_key_key`(`tenantId`, `key`),
+    UNIQUE INDEX `settings_tenantId_key_key`(`tenantId`, `key`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `User` ADD CONSTRAINT `User_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `Tenant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `users` ADD CONSTRAINT `users_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `tenants`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `RefreshToken` ADD CONSTRAINT `RefreshToken_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `refresh_tokens` ADD CONSTRAINT `refresh_tokens_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Company` ADD CONSTRAINT `Company_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `Tenant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `companies` ADD CONSTRAINT `companies_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `tenants`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Contact` ADD CONSTRAINT `Contact_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `Tenant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `contacts` ADD CONSTRAINT `contacts_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `tenants`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Contact` ADD CONSTRAINT `Contact_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `Company`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `contacts` ADD CONSTRAINT `contacts_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `companies`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Lead` ADD CONSTRAINT `Lead_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `Tenant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `leads` ADD CONSTRAINT `leads_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `tenants`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Lead` ADD CONSTRAINT `Lead_contactId_fkey` FOREIGN KEY (`contactId`) REFERENCES `Contact`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `leads` ADD CONSTRAINT `leads_contactId_fkey` FOREIGN KEY (`contactId`) REFERENCES `contacts`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Lead` ADD CONSTRAINT `Lead_assignedToId_fkey` FOREIGN KEY (`assignedToId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `leads` ADD CONSTRAINT `leads_assignedToId_fkey` FOREIGN KEY (`assignedToId`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Deal` ADD CONSTRAINT `Deal_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `Tenant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `deals` ADD CONSTRAINT `deals_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `tenants`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Deal` ADD CONSTRAINT `Deal_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `Company`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `deals` ADD CONSTRAINT `deals_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `companies`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Deal` ADD CONSTRAINT `Deal_assignedToId_fkey` FOREIGN KEY (`assignedToId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `deals` ADD CONSTRAINT `deals_assignedToId_fkey` FOREIGN KEY (`assignedToId`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Activity` ADD CONSTRAINT `Activity_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `Tenant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `activities` ADD CONSTRAINT `activities_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `tenants`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Activity` ADD CONSTRAINT `Activity_actorId_fkey` FOREIGN KEY (`actorId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `activities` ADD CONSTRAINT `activities_actorId_fkey` FOREIGN KEY (`actorId`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `AuditLog` ADD CONSTRAINT `AuditLog_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `Tenant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `auditlogs` ADD CONSTRAINT `auditlogs_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `tenants`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `AuditLog` ADD CONSTRAINT `AuditLog_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `auditlogs` ADD CONSTRAINT `auditlogs_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Setting` ADD CONSTRAINT `Setting_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `Tenant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `settings` ADD CONSTRAINT `settings_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `tenants`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
