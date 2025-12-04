@@ -1,10 +1,9 @@
-import { NextFunction, Response } from "express";
-import jwt from "jsonwebtoken";
-import { config } from "../config";
-import { prisma } from "../core/db";
-import { UnauthorizedError } from "../core/error";
-import { AuthRequest } from "../types/authRequest";
-
+import { NextFunction, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import { config } from '../config';
+import { prisma } from '../core/db';
+import { UnauthorizedError } from '../core/error';
+import { AuthRequest } from '../types/authRequest';
 
 export const authenticate = async (
   req: AuthRequest,
@@ -14,10 +13,10 @@ export const authenticate = async (
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-       throw new UnauthorizedError("Missing token")
+      throw new UnauthorizedError('Missing token');
     }
 
-    const token = authHeader.replace("Bearer ", "");
+    const token = authHeader.replace('Bearer ', '');
 
     const decoded = jwt.verify(token, config.jwt.secret) as {
       sub: string;
@@ -31,7 +30,7 @@ export const authenticate = async (
     });
 
     if (!user) {
-      throw new UnauthorizedError("Invalid User")
+      throw new UnauthorizedError('Invalid User');
     }
 
     req.user = {
@@ -42,6 +41,6 @@ export const authenticate = async (
 
     next();
   } catch (error) {
-    throw new UnauthorizedError("Invalid User")
+    throw new UnauthorizedError('Invalid User');
   }
 };

@@ -63,7 +63,7 @@ export const config = {
   jwt: {
     secret: env.JWT_SECRET,
     refreshSecret: env.JWT_REFRESH_SECRET,
-    expiresIn: env.JWT_EXPIRES_IN
+    expiresIn: env.JWT_EXPIRES_IN,
   },
 
   tenancy: {

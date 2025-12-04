@@ -7,21 +7,12 @@ import { LoginSchema, RefreshTokenSchema, RegisterSchema } from './dto';
 
 const router = Router();
 
-router.post('/register', 
-    validate(RegisterSchema), 
-    authController.register);
+router.post('/register', validate(RegisterSchema), authController.register);
 
-router.post("/login", 
-    validate(LoginSchema), 
-    authController.login);
+router.post('/login', validate(LoginSchema), authController.login);
 
-router.post('/refresh', 
-    validate(RefreshTokenSchema), 
-    authController.refresh);
+router.post('/refresh', validate(RefreshTokenSchema), authController.refresh);
 
-router.post('/logout', 
-    validate(RefreshTokenSchema),
-    authController.logout);
-
+router.post('/logout', validate(RefreshTokenSchema), authController.logout);
 
 export default router;

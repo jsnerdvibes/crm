@@ -13,26 +13,22 @@ apiRoutes.use('/auth', authRoutes);
 // apiRoutes.use('/users', userRoutes);
 // apiRoutes.use('/leads', leadRoutes);
 
-
-
 // Test Routes
 
-apiRoutes.get("/protected", authenticate, (req, res) => {
+apiRoutes.get('/protected', authenticate, (req, res) => {
   const user = (req as AuthRequest).user;
 
   res.json({
-    message: "Access granted",
+    message: 'Access granted',
     user,
   });
 });
 
-
-apiRoutes.get("/admin-only", authenticate, requiresAdmin, (req, res) => {
-
-const user = (req as AuthRequest).user;
+apiRoutes.get('/admin-only', authenticate, requiresAdmin, (req, res) => {
+  const user = (req as AuthRequest).user;
 
   res.json({
-    message: "Admin access granted",
+    message: 'Admin access granted',
     user,
   });
 });
