@@ -3,13 +3,14 @@ import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import { PrismaClient } from '../generated/prisma/client';
 import {logger} from '../src/core/logger'
 import bcrypt from 'bcrypt';
+import { config } from '../src/config';
 
 const adapter = new PrismaMariaDb({
-  host: process.env.DATABASE_HOST!,
-  user: process.env.DATABASE_USER!,
-  password: process.env.DATABASE_PASSWORD!,
-  database: process.env.DATABASE_NAME!,
-  port: Number(process.env.DATABASE_PORT || 3306),
+  host: config.database.host!,
+  user: config.database.user!,
+  password: config.database.password!,
+  database: config.database.dbName!,
+  port: Number(config.database.dbPort || 3306),
   connectionLimit: 5,
 });
 

@@ -1,21 +1,35 @@
-import fs from 'fs';
-import path from 'path';
-import pino from 'pino';
+import fs from "fs";
+import path from "path";
+import pino from "pino";
+import { config } from "../config";
 
-// Ensure logs folder exists
-const logDir = path.resolve(__dirname, '../../logs');
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
+// Create transport only in development
+let transport;
+
+if (config.app.env !== "production") {
+  const logDir = path.resolve(__dirname, "../../logs");
+
+  // Ensure logs folder exists
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+  }
+
+  const logFile = path.join(logDir, "app.logs");
+
+  transport = pino.transport({
+    target: "pino/file",
+    options: {
+      destination: logFile,
+      mkdir: true,
+    },
+  });
 }
 
-// Log file path
-const logFile = path.join(logDir, 'app.logs');
-
-// Create Pino logger with file transport
+// Production → no transport (console only)
 export const logger = pino(
   {
-    level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+    level: config.app.env === "production" ? "info" : "debug",
     timestamp: () => `,"time":"${new Date().toISOString()}"`,
   },
-  pino.destination(logFile) // writes logs to file
+  transport // dev → file, prod → console
 );

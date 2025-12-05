@@ -8,6 +8,7 @@ import {
   NotFoundError,
 } from '../../core/error';
 import { logger } from '../../core/logger';
+import { config } from '../../config';
 
 export class UsersService {
   constructor(private repo: IUsersRepository) {}
@@ -27,7 +28,7 @@ export class UsersService {
 
     const passwordHash = await bcrypt.hash(
       data.password,
-      Number(process.env.BCRYPT_SALT_ROUNDS)
+      Number(config.bcrypt.saltRounds)
     );
 
     const user = await this.repo.create(
@@ -67,7 +68,7 @@ export class UsersService {
     if (data.password) {
       updateData.passwordHash = await bcrypt.hash(
         data.password,
-        Number(process.env.BCRYPT_SALT_ROUNDS)
+        Number(config.bcrypt.saltRounds)
       );
     }
 

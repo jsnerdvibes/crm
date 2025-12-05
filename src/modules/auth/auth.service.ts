@@ -26,7 +26,7 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(
       data.password,
-      Number(process.env.BCRYPT_SALT_ROUNDS)
+      Number(config.bcrypt.saltRounds)
     );
 
     const admin = await this.repo.createUser(

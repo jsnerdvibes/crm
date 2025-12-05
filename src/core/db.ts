@@ -26,7 +26,7 @@ const prisma =
     log: ['query', 'error', 'warn'],
   });
 
-if (process.env.NODE_ENV !== 'production') {
+if (config.app.env !== 'production') {
   global.__prisma = prisma;
 }
 

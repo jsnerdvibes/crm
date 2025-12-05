@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../core/error';
 import { errorResponse } from '../utils/response';
 import { logger } from '../core/logger';
+import { config } from '../config';
 
 export function errorHandler(
   err: Error | AppError,
@@ -22,7 +23,7 @@ export function errorHandler(
     const errors = (err as any).errors || [];
     return res.status(statusCode).json({
       ...errorResponse(message, errors),
-      ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+      ...(config.app.env === 'development' && { stack: err.stack }),
     });
   }
 
