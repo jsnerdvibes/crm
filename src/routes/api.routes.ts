@@ -2,6 +2,7 @@ import { Router } from 'express';
 import authRoutes from '../modules/auth/auth.routes';
 import userRoutes from '../modules/users/users.routes';
 import leadRoutes from '../modules/leads/leads.routes';
+import companyRoutes from '../modules/company/company.routes';
 import contactRoutes from '../modules/contacts/contacts.routes';
 import { AuthRequest } from '../types/authRequest';
 import { authenticate } from '../middlewares/auth';
@@ -18,13 +19,15 @@ apiRoutes.use('/users', userRoutes);
 // Lead Routes
 apiRoutes.use('/leads', leadRoutes);
 
+
+// Contact Routes
 apiRoutes.use('/contacts', contactRoutes);
 
 
+// Company Routes
+apiRoutes.use('/companies', companyRoutes);
 
-// Future modules
-// apiRoutes.use('/users', userRoutes);
-// apiRoutes.use('/leads', leadRoutes);
+
 
 // Test Routes
 
