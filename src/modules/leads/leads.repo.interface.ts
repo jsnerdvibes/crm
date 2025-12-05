@@ -1,5 +1,5 @@
 import { Lead } from '../../core/db';
-import { CreateLeadDTO, UpdateLeadDTO, LeadQueryDTO } from './dto';
+import { CreateLeadDTO, UpdateLeadDTO, LeadQueryDTO, LeadFilterDTO } from './dto';
 
 export interface ILeadsRepository {
   /**
@@ -29,4 +29,25 @@ export interface ILeadsRepository {
    * Delete a lead
    */
   delete(tenantId: string, leadId: string): Promise<void>;
+
+
+  assignLead(
+  tenantId: string,
+  leadId: string,
+  assignedToId: string
+): Promise<Lead>;
+
+
+  findWithFilters(
+    tenantId: string,
+    filters: {
+      page?: string;
+      limit?: string;
+      search?: string;
+      status?: "NEW" | "CONTACTED" | "QUALIFIED" | "LOST";
+      assignedToId?: string;
+    }
+  ): Promise<{ leads: Lead[]; total: number }>;
+
+
 }

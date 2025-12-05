@@ -9,20 +9,23 @@ const router = Router();
 // All routes require authentication
 router.use(authenticate);
 
+
+// --------------------------------------
+// Get all leads (with optional filters)
+// --------------------------------------
+router.get("/", leadsController.findAll);
+
+
+
 // --------------------------------------
 // Create a new lead
 // --------------------------------------
 router.post('/', validate(CreateLeadSchema), leadsController.create);
 
-// --------------------------------------
-// Get all leads (with optional filters)
-// --------------------------------------
-router.get('/', leadsController.findAll);
 
-// --------------------------------------
-// Get a single lead by ID
-// --------------------------------------
-router.get('/:id', leadsController.findById);
+// router.get('/', leadsController.findAll);
+
+
 
 // --------------------------------------
 // Update a lead by ID
@@ -33,5 +36,16 @@ router.put('/:id', validate(UpdateLeadSchema), leadsController.update);
 // Delete a lead by ID
 // --------------------------------------
 router.delete('/:id', leadsController.delete);
+
+
+// Assign lead to a user
+router.patch('/:id/assign', leadsController.assignLead);
+
+
+// --------------------------------------
+// Get a single lead by ID
+// --------------------------------------
+router.get('/:id', leadsController.findById);
+
 
 export default router;

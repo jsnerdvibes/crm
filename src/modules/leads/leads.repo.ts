@@ -1,6 +1,7 @@
 import { prisma, Lead } from '../../core/db';
 import { ILeadsRepository } from './leads.repo.interface';
-import { CreateLeadDTO, UpdateLeadDTO, LeadQueryDTO } from './dto';
+import { CreateLeadDTO, UpdateLeadDTO, LeadQueryDTO, LeadFilterDTO } from './dto';
+import { NotFoundError } from '../../core/error';
 
 export class LeadsRepository implements ILeadsRepository {
   // Create a new lead
@@ -39,12 +40,14 @@ export class LeadsRepository implements ILeadsRepository {
 
     const where: any = { tenantId };
 
+    
+
     if (query?.status) where.status = query.status;
     if (query?.assignedToId) where.assignedToId = query.assignedToId;
     if (query?.search) {
       where.OR = [
-        { title: { contains: query.search, mode: 'insensitive' } },
-        { description: { contains: query.search, mode: 'insensitive' } },
+        { title: { contains: query.search } },
+        { description: { contains: query.search} },
       ];
     }
 
@@ -76,7 +79,7 @@ export class LeadsRepository implements ILeadsRepository {
     });
 
     const lead = await this.findById(tenantId, leadId);
-    if (!lead) throw new Error('Lead not found');
+    if (!lead) throw new NotFoundError('Lead not found');
     return lead;
   }
 
@@ -89,4 +92,52 @@ export class LeadsRepository implements ILeadsRepository {
       },
     });
   }
+
+
+  async assignLead(
+  tenantId: string,
+  leadId: string,
+  assignedToId: string
+): Promise<Lead> {
+  await prisma.lead.updateMany({
+    where: { id: leadId, tenantId },
+    data: { assignedToId },
+  });
+
+  const lead = await this.findById(tenantId, leadId);
+  if (!lead) throw new NotFoundError('Lead not found');
+  return lead;
+}
+
+async findWithFilters(tenantId: string, filters: any) {
+  const skip = (filters.page - 1) * filters.limit;
+
+  const whereClause: any = { tenantId };
+
+  if (filters.status) whereClause.status = filters.status;
+  if (filters.assignedToId) whereClause.assignedToId = filters.assignedToId;
+  if (filters.source) whereClause.source = filters.source; // important
+  if (filters.search) {
+    whereClause.OR = [
+      { title: { contains: filters.search} },
+      { description: { contains: filters.search} },
+    ];
+  }
+
+  const leads = await prisma.lead.findMany({
+    where: whereClause,
+    skip,
+    take: filters.limit,
+    orderBy: { createdAt: 'desc' },
+    include: { contact: true },
+  });
+
+  const total = await prisma.lead.count({ where: whereClause });
+
+  return { leads, total };
+}
+
+
+
+
 }

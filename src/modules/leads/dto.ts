@@ -35,6 +35,37 @@ export const UpdateLeadSchema = z.object({
 
 export type UpdateLeadDTO = z.infer<typeof UpdateLeadSchema>;
 
+
+
+/**
+ * Assign Lead DTO
+ * Assign a lead to a user
+ */
+export const AssignLeadSchema = z.object({
+  leadId: z.string({ error: 'Lead ID is required' }),
+  assignedToId: z.string({ error: 'User ID is required' }),
+});
+
+export type AssignLeadDTO = z.infer<typeof AssignLeadSchema>;
+
+
+/**
+ * Lead Filter / Search DTO
+ * Used for listing leads with filters
+ */
+export const LeadFilterSchema = z.object({
+  status: z.enum(LeadStatus).optional(),
+  assignedToId: z.string().optional(),
+  title: z.string().optional(),
+  contactEmail: z.string().optional(),
+  page: z.number().int().min(1).optional().default(1),
+  limit: z.number().int().min(1).max(100).optional().default(20),
+  source: z.string().optional()
+});
+
+export type LeadFilterDTO = z.infer<typeof LeadFilterSchema>;
+
+
 /**
  * Lead Filters (GET /leads)
  * - Pagination

@@ -3,8 +3,12 @@ import { requestLogger } from './middlewares/requestLogger';
 import { errorHandler } from './middlewares/errorHandler';
 import { setupSwagger } from './core/swagger';
 import { apiRoutes } from './routes/api.routes';
+import cors from 'cors'
+
 
 export const app = express();
+
+app.use(cors())
 
 app.use(express.json());
 app.use(requestLogger);

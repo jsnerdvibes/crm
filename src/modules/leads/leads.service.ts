@@ -47,7 +47,6 @@ async deleteLead(tenantId: string, leadId: string): Promise<void> {
     if (!lead) throw new NotFoundError('Lead not found');
 
     await this.repo.delete(tenantId, leadId);
-    throw Error("Error occured while deleting lead");
 }
 
 
@@ -64,24 +63,62 @@ async getLeadById(tenantId: string, leadId: string): Promise<LeadResponse> {
   // -------------------------
   // Get all leads with filters
   // -------------------------
-async getAllLeads(
-  tenantId: string,
-  query?: any // LeadQueryDTO
-): Promise<{ leads: LeadResponse[]; page: number; limit: number; total: number }> {
-  try {
-    const { leads, total } = await this.repo.findAll(tenantId, query);
-    const page = query?.page ? parseInt(query.page, 10) : 1;
-    const limit = query?.limit ? parseInt(query.limit, 10) : 20;
+async getAllLeads(tenantId: string, query: any) {
+  // DO NOT convert page/limit here → let repo handle it
+  const filters = {
+    page: query.page,                 // string | undefined
+    limit: query.limit,               // string | undefined
+    search: query.search,             // string | undefined
+    status: query.status,             // string | undefined
+    assignedToId: query.assignedToId, // string | undefined
+  };
 
-    return {
-      leads: leads.map(this.sanitize),
-      page,
-      limit,
-      total,
-    };
-  } catch (error) {
-    throw Error("Error occured while getting all leads");
-  }
+  const { leads, total } = await this.repo.findWithFilters(tenantId, filters);
+
+  return {
+    leads: leads.map(this.sanitize),
+
+    // Convert to number only for response
+    page: query.page ? parseInt(query.page, 10) : 1,
+    limit: query.limit ? parseInt(query.limit, 10) : 20,
+    total,
+  };
+}
+
+
+
+async assignLead(
+  tenantId: string,
+  leadId: string,
+  assignedToId: string
+): Promise<LeadResponse> {
+  const lead = await this.repo.findById(tenantId, leadId);
+  if (!lead) throw new NotFoundError('Lead not found');
+
+  const updated = await this.repo.assignLead(tenantId, leadId, assignedToId);
+  return this.sanitize(updated);
+}
+
+// --------------------------------------
+// Filter + search leads
+// --------------------------------------
+async filterLeads(
+  tenantId: string,
+  filters: any
+): Promise<{ leads: LeadResponse[]; page: number; limit: number; total: number }> {
+  const page = filters.page || 1;
+  const limit = filters.limit || 20;
+  
+  
+
+  const { leads, total } = await this.repo.findWithFilters(tenantId, filters);
+
+  return {
+    leads: leads.map(this.sanitize),
+    page,
+    limit,
+    total,
+  };
 }
 
 
