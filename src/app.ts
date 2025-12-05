@@ -14,6 +14,11 @@ setupSwagger(app);
 app.use('/api/v1', apiRoutes);
 
 // --- Health Route ---
+app.get('/', (req, res) => {
+  res.status(200).send("Server is up")
+});
+
+// --- Health Route ---
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
