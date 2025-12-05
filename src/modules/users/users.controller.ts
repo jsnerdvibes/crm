@@ -436,7 +436,7 @@ export class UsersController {
   /**
    * @swagger
    * /api/v1/users/{id}:
-   *   put:
+   *   patch:
    *     summary: Update a user within the tenant
    *     tags: [Users]
    *     security:

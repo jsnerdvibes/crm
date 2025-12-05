@@ -2,6 +2,7 @@ import { Router } from 'express';
 import authRoutes from '../modules/auth/auth.routes';
 import userRoutes from '../modules/users/users.routes';
 import leadRoutes from '../modules/leads/leads.routes';
+import contactRoutes from '../modules/contacts/contacts.routes';
 import { AuthRequest } from '../types/authRequest';
 import { authenticate } from '../middlewares/auth';
 import { requiresAdmin } from '../middlewares/rbac';
@@ -16,6 +17,9 @@ apiRoutes.use('/users', userRoutes);
 
 // Lead Routes
 apiRoutes.use('/leads', leadRoutes);
+
+apiRoutes.use('/contacts', contactRoutes);
+
 
 
 // Future modules

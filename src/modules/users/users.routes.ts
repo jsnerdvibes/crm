@@ -29,7 +29,7 @@ router.get('/:id', userController.findById);
 // --------------------------------------
 // Update user
 // --------------------------------------
-router.put('/:id', validate(UpdateUserSchema), userController.update);
+router.patch('/:id', validate(UpdateUserSchema), userController.update);
 
 // --------------------------------------
 // Deactivate (soft delete) user

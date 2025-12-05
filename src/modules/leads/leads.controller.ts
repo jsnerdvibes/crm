@@ -344,7 +344,7 @@ export class LeadsController {
 /**
  * @swagger
  * /api/v1/leads/{id}:
- *   put:
+ *   patch:
  *     summary: Update a lead within the tenant
  *     tags: [Leads]
  *     security:

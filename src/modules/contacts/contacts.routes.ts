@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { leadsController } from './index';
+import { contactsController } from './index';
 import { validate } from '../../middlewares/validate';
-import { CreateLeadSchema, UpdateLeadSchema } from './dto';
+import { CreateContactSchema, UpdateContactSchema } from './dto';
 import { authenticate } from '../../middlewares/auth';
 
 const router = Router();
@@ -9,43 +9,29 @@ const router = Router();
 // All routes require authentication
 router.use(authenticate);
 
+// --------------------------------------
+// Create a new contact
+// --------------------------------------
+router.post('/', validate(CreateContactSchema), contactsController.create);
 
 // --------------------------------------
-// Get all leads (with optional filters)
+// Get all contacts
 // --------------------------------------
-router.get("/", leadsController.findAll);
-
-
+router.get('/', contactsController.getAll);
 
 // --------------------------------------
-// Create a new lead
+// Get single contact by ID
 // --------------------------------------
-router.post('/', validate(CreateLeadSchema), leadsController.create);
-
-
-// router.get('/', leadsController.findAll);
-
-
+router.get('/:id', contactsController.getById);
 
 // --------------------------------------
-// Update a lead by ID
+// Update contact
 // --------------------------------------
-router.patch('/:id', validate(UpdateLeadSchema), leadsController.update);
-
-// --------------------------------------
-// Delete a lead by ID
-// --------------------------------------
-router.delete('/:id', leadsController.delete);
-
-
-// Assign lead to a user
-router.patch('/:id/assign', leadsController.assignLead);
-
+router.patch('/:id', validate(UpdateContactSchema), contactsController.update);
 
 // --------------------------------------
-// Get a single lead by ID
+// Delete contact
 // --------------------------------------
-router.get('/:id', leadsController.findById);
-
+router.delete('/:id', contactsController.delete);
 
 export default router;
