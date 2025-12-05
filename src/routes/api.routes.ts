@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import authRoutes from '../modules/auth/auth.routes';
 import userRoutes from '../modules/users/users.routes';
+import leadRoutes from '../modules/leads/leads.routes';
 import { AuthRequest } from '../types/authRequest';
 import { authenticate } from '../middlewares/auth';
 import { requiresAdmin } from '../middlewares/rbac';
@@ -12,6 +13,10 @@ apiRoutes.use('/auth', authRoutes);
 
 // User Routes
 apiRoutes.use('/users', userRoutes);
+
+// Lead Routes
+apiRoutes.use('/leads', leadRoutes);
+
 
 // Future modules
 // apiRoutes.use('/users', userRoutes);
