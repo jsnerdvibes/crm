@@ -13,7 +13,9 @@ router.use(authenticate);
 // --------------------------------------
 // Get all leads (with optional filters)
 // --------------------------------------
+
 router.get("/", leadsController.findAll);
+
 
 
 
@@ -21,9 +23,6 @@ router.get("/", leadsController.findAll);
 // Create a new lead
 // --------------------------------------
 router.post('/', validate(CreateLeadSchema), leadsController.create);
-
-
-// router.get('/', leadsController.findAll);
 
 
 
@@ -46,6 +45,7 @@ router.patch('/:id/assign', leadsController.assignLead);
 // Get a single lead by ID
 // --------------------------------------
 router.get('/:id', leadsController.findById);
+
 
 
 export default router;

@@ -3,7 +3,7 @@ import { LeadsService } from './leads.service';
 import { successResponse } from '../../utils/response';
 import { AuthRequest } from '../../types/authRequest';
 import { LeadStatus } from '../../core/db';
-import { BadRequestError } from '../../core/error';
+import { BadRequestError, ForbiddenError } from '../../core/error';
 
 export class LeadsController {
   constructor(private service: LeadsService) {}
@@ -818,51 +818,65 @@ export class LeadsController {
 
 /**
  * @swagger
- * /api/v1/leads/filter:
+ * /api/v1/leads/testGetLeads:
  *   get:
- *     summary: Filter and search leads within the tenant
+ *     summary: Get all leads with optional filtering and pagination
+ *     description: |
+ *       Returns all leads for the tenant.  
+ *       Supports filtering by status, source, assigned user, and search across title/description.
  *     tags: [Leads]
  *     security:
  *       - bearerAuth: []
+ * 
  *     parameters:
  *       - name: search
  *         in: query
- *         description: Search by title or description
+ *         description: Search in lead title or description
  *         schema:
  *           type: string
- *           example: "website"
+ *           example: website
+ * 
  *       - name: status
  *         in: query
- *         description: Filter by lead status
+ *         description: Filter by lead status (NEW, CONTACTED, QUALIFIED, LOST, etc.)
  *         schema:
  *           type: string
- *           example: "NEW"
+ *           example: NEW
+ * 
+ *       - name: source
+ *         in: query
+ *         description: Filter by lead source (LinkedIn, Naukri, etc.)
+ *         schema:
+ *           type: string
+ *           example: LinkedIn
+ * 
  *       - name: assignedToId
  *         in: query
- *         description: Filter by assigned user ID
+ *         description: Filter leads assigned to a specific user
  *         schema:
  *           type: string
  *           format: uuid
- *           example: "f21ab090-9dd3-420f-8cba-99acac110003"
- *       - name: source
- *         in: query
- *         description: Lead source
- *         schema:
- *           type: string
- *           example: "facebook"
+ *           example: 743481e0-f6f2-41d5-bd73-773033a1d3c3
+ * 
  *       - name: page
  *         in: query
+ *         description: Page number for pagination
  *         schema:
  *           type: integer
+ *           default: 1
  *           example: 1
+ * 
  *       - name: limit
  *         in: query
+ *         description: Number of leads per page
  *         schema:
  *           type: integer
+ *           default: 20
  *           example: 20
+ * 
  *     responses:
  *       200:
- *         description: Leads filtered successfully
+ *         description: Leads fetched successfully
  *         content:
  *           application/json:
  *             schema:
@@ -870,72 +884,86 @@ export class LeadsController {
  *               properties:
  *                 status:
  *                   type: string
- *                   example: "success"
+ *                   example: success
  *                 message:
  *                   type: string
- *                   example: "Leads filtered successfully"
+ *                   example: Leads fetched
  *                 data:
  *                   type: object
  *                   properties:
  *                     leads:
  *                       type: array
  *                       items:
- *                         $ref: '#/components/schemas/LeadResponse'
+ *                         $ref: "#/components/schemas/LeadResponse"
  *                     page:
  *                       type: integer
+ *                       example: 1
  *                     limit:
  *                       type: integer
+ *                       example: 20
  *                     total:
  *                       type: integer
+ *                       example: 9
  *                 errors:
  *                   type: array
- *                   items: {}
  *                   example: []
- *       400:
- *         description: Invalid query parameters
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/responses/BadRequest'
+ * 
  *       403:
- *         description: Forbidden – unauthorized tenant access
+ *         description: Forbidden – Unauthorized tenant access
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/responses/Forbidden'
+ *               $ref: "#/components/responses/Forbidden"
+ * 
  *       500:
- *         description: Internal Server Error
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/responses/ServerError'
+ *               $ref: "#/components/responses/ServerError"
  */
+
+
 
 findAll = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const tenantId = req.user!.tenantId;
+    const tenantId = req.user?.tenantId;
 
-    const status = req.query.status as string;
-    if (status && !Object.values(LeadStatus).includes(status as LeadStatus)) {
-      throw new BadRequestError(`Invalid status value. Allowed values: ${Object.values(LeadStatus).join(', ')}`);
+    if (!tenantId) {
+      throw new ForbiddenError("You are not authorized");
     }
 
-    const filters = {
-      search: req.query.search as string | undefined,
-      status,
-      assignedToId: req.query.assignedToId as string | undefined,
-      source: req.query.source as string | undefined,
-      page: req.query.page ? Number(req.query.page) : 1,
-      limit: req.query.limit ? Number(req.query.limit) : 20,
+    // Safely parse pagination
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 20;
+
+    // Build filters and automatically remove empty/undefined values
+    const filters: any = {
+      page,
+      limit,
+      status: req.query.status || undefined,
+      source: req.query.source || undefined,
+      assignedToId: req.query.assignedToId || undefined,
+      search: req.query.search || undefined,
     };
 
-    const result = await this.service.filterLeads(tenantId, filters);
+    // Remove keys where value === undefined
+    Object.keys(filters).forEach(
+      key => filters[key] === undefined && delete filters[key]
+    );
 
-    return res.json(successResponse("Leads filtered successfully", result));
+    const result = await this.service.getLeads(tenantId, filters);
+
+    return res.json({
+      status: "success",
+      message: "Leads fetched",
+      data: result,
+    });
+
   } catch (error) {
     next(error);
   }
-};
+}
 
 
 

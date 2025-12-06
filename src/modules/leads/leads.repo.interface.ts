@@ -1,5 +1,5 @@
 import { Lead } from '../../core/db';
-import { CreateLeadDTO, UpdateLeadDTO, LeadQueryDTO, LeadFilterDTO } from './dto';
+import { CreateLeadDTO, UpdateLeadDTO } from './dto';
 
 export interface ILeadsRepository {
   /**
@@ -12,13 +12,6 @@ export interface ILeadsRepository {
    */
   findById(tenantId: string, leadId: string): Promise<Lead | null>;
 
-  /**
-   * Get list of leads with optional filters, search, and pagination
-   */
-  findAll(
-    tenantId: string,
-    query?: LeadQueryDTO
-  ): Promise<{ leads: Lead[]; total: number }>;
 
   /**
    * Update an existing lead
@@ -38,16 +31,18 @@ export interface ILeadsRepository {
 ): Promise<Lead>;
 
 
-  findWithFilters(
-    tenantId: string,
-    filters: {
-      page?: string;
-      limit?: string;
-      search?: string;
-      status?: "NEW" | "CONTACTED" | "QUALIFIED" | "LOST";
-      assignedToId?: string;
-    }
-  ): Promise<{ leads: Lead[]; total: number }>;
+  getLeads(
+  tenantId: string,
+  filters: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    source?: string;
+    search?: string;
+    assignedToId?: string;
+  }
+): Promise<{ leads: Lead[]; total: number }>;
+
 
 
 }

@@ -1,6 +1,6 @@
 import { prisma, Lead } from '../../core/db';
 import { ILeadsRepository } from './leads.repo.interface';
-import { CreateLeadDTO, UpdateLeadDTO, LeadQueryDTO, LeadFilterDTO } from './dto';
+import { CreateLeadDTO, UpdateLeadDTO} from './dto';
 import { NotFoundError } from '../../core/error';
 
 export class LeadsRepository implements ILeadsRepository {
@@ -29,40 +29,6 @@ export class LeadsRepository implements ILeadsRepository {
     });
   }
 
-  // Get list of leads with optional filters, search, pagination
-  async findAll(
-    tenantId: string,
-    query?: LeadQueryDTO
-  ): Promise<{ leads: Lead[]; total: number }> {
-    const page = query?.page ? parseInt(query.page, 10) : 1;
-    const limit = query?.limit ? parseInt(query.limit, 10) : 20;
-    const skip = (page - 1) * limit;
-
-    const where: any = { tenantId };
-
-    
-
-    if (query?.status) where.status = query.status;
-    if (query?.assignedToId) where.assignedToId = query.assignedToId;
-    if (query?.search) {
-      where.OR = [
-        { title: { contains: query.search } },
-        { description: { contains: query.search} },
-      ];
-    }
-
-    const [leads, total] = await Promise.all([
-      prisma.lead.findMany({
-        where,
-        orderBy: { createdAt: 'desc' },
-        skip,
-        take: limit,
-      }),
-      prisma.lead.count({ where }),
-    ]);
-
-    return { leads, total };
-  }
 
   // Update a lead
   async update(
@@ -109,30 +75,35 @@ export class LeadsRepository implements ILeadsRepository {
   return lead;
 }
 
-async findWithFilters(tenantId: string, filters: any) {
-  const skip = (filters.page - 1) * filters.limit;
 
-  const whereClause: any = { tenantId };
 
-  if (filters.status) whereClause.status = filters.status;
-  if (filters.assignedToId) whereClause.assignedToId = filters.assignedToId;
-  if (filters.source) whereClause.source = filters.source; // important
+
+async getLeads(tenantId: string, filters: any) {
+  const page = filters.page || 1;
+  const limit = filters.limit || 20;
+  const skip = (page - 1) * limit;
+
+  const where: any = { tenantId };
+
+  if (filters.status) where.status = filters.status;
+  if (filters.source) where.source = filters.source;
+  if (filters.assignedToId) where.assignedToId = filters.assignedToId;
+
   if (filters.search) {
-    whereClause.OR = [
-      { title: { contains: filters.search} },
-      { description: { contains: filters.search} },
+    where.OR = [
+      { title: { contains: filters.search } },
+      { description: { contains: filters.search } },
     ];
   }
 
   const leads = await prisma.lead.findMany({
-    where: whereClause,
+    where,
     skip,
-    take: filters.limit,
-    orderBy: { createdAt: 'desc' },
-    include: { contact: true },
+    take: limit,
+    orderBy: { createdAt: "desc" },
   });
 
-  const total = await prisma.lead.count({ where: whereClause });
+  const total = await prisma.lead.count({ where });
 
   return { leads, total };
 }

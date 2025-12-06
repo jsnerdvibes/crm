@@ -60,30 +60,6 @@ async getLeadById(tenantId: string, leadId: string): Promise<LeadResponse> {
     return this.sanitize(lead);
 }
 
-  // -------------------------
-  // Get all leads with filters
-  // -------------------------
-async getAllLeads(tenantId: string, query: any) {
-  // DO NOT convert page/limit here → let repo handle it
-  const filters = {
-    page: query.page,                 // string | undefined
-    limit: query.limit,               // string | undefined
-    search: query.search,             // string | undefined
-    status: query.status,             // string | undefined
-    assignedToId: query.assignedToId, // string | undefined
-  };
-
-  const { leads, total } = await this.repo.findWithFilters(tenantId, filters);
-
-  return {
-    leads: leads.map(this.sanitize),
-
-    // Convert to number only for response
-    page: query.page ? parseInt(query.page, 10) : 1,
-    limit: query.limit ? parseInt(query.limit, 10) : 20,
-    total,
-  };
-}
 
 
 
@@ -99,19 +75,12 @@ async assignLead(
   return this.sanitize(updated);
 }
 
-// --------------------------------------
-// Filter + search leads
-// --------------------------------------
-async filterLeads(
-  tenantId: string,
-  filters: any
-): Promise<{ leads: LeadResponse[]; page: number; limit: number; total: number }> {
+
+async getLeads(tenantId: string, filters: any) {
   const page = filters.page || 1;
   const limit = filters.limit || 20;
-  
-  
 
-  const { leads, total } = await this.repo.findWithFilters(tenantId, filters);
+  const { leads, total } = await this.repo.getLeads(tenantId, filters);
 
   return {
     leads: leads.map(this.sanitize),
