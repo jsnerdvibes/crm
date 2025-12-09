@@ -964,9 +964,4 @@ findAll = async (req: AuthRequest, res: Response, next: NextFunction) => {
     next(error);
   }
 }
-
-
-
-
-
 }

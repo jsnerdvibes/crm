@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import authRoutes from '../modules/auth/auth.routes';
-import userRoutes from '../modules/users/users.routes';
-import leadRoutes from '../modules/leads/leads.routes';
+import userRoutes from '../modules/user/users.routes';
+import leadRoutes from '../modules/lead/leads.routes';
+import dealRoutes from '../modules/deal/deal.routes';
 import companyRoutes from '../modules/company/company.routes';
-import contactRoutes from '../modules/contacts/contacts.routes';
+import contactRoutes from '../modules/contact/contacts.routes';
 import { AuthRequest } from '../types/authRequest';
 import { authenticate } from '../middlewares/auth';
 import { requiresAdmin } from '../middlewares/rbac';
@@ -26,6 +27,13 @@ apiRoutes.use('/contacts', contactRoutes);
 
 // Company Routes
 apiRoutes.use('/companies', companyRoutes);
+
+
+// Deal Routes
+apiRoutes.use('/deals', dealRoutes);
+
+
+
 
 
 
