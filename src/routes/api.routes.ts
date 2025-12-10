@@ -5,6 +5,7 @@ import leadRoutes from '../modules/lead/leads.routes';
 import dealRoutes from '../modules/deal/deal.routes';
 import companyRoutes from '../modules/company/company.routes';
 import contactRoutes from '../modules/contact/contacts.routes';
+import activityRoutes from '../modules/activity/activity.routes';
 import { AuthRequest } from '../types/authRequest';
 import { authenticate } from '../middlewares/auth';
 import { requiresAdmin } from '../middlewares/rbac';
@@ -33,7 +34,8 @@ apiRoutes.use('/companies', companyRoutes);
 apiRoutes.use('/deals', dealRoutes);
 
 
-
+// Activity Routes
+apiRoutes.use('/activities', activityRoutes);
 
 
 

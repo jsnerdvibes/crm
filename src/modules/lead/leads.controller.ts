@@ -818,7 +818,7 @@ export class LeadsController {
 
 /**
  * @swagger
- * /api/v1/leads/testGetLeads:
+ * /api/v1/leads:
  *   get:
  *     summary: Get all leads with optional filtering and pagination
  *     description: |
