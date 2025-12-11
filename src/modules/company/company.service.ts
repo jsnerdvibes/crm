@@ -99,11 +99,13 @@ export class CompanyService {
   await logAudit(
     tenantId,
     performedById,
-    LogActions.CREATE,
+    LogActions.DELETE,
     LogResources.COMPANY,
     company.id,
     { title: company.name }
   );
+
+  await this.repo.delete(tenantId, companyId)
 
   }
 
