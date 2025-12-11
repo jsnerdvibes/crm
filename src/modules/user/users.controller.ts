@@ -2,7 +2,6 @@ import { Response, NextFunction } from 'express';
 import { UsersService } from './users.service';
 import { successResponse } from '../../utils/response';
 import { AuthRequest } from '../../types/authRequest';
-import { auditService } from '../audit';
 
 export class UsersController {
   constructor(private service: UsersService) {}
@@ -160,21 +159,8 @@ export class UsersController {
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const tenantId = req.user!.tenantId;
-      const result = await this.service.createUser(tenantId, req.body);
-
-    const userId = req.user?.id;
-    const title = result.name;
-    const resourceId = result.id;
-
-    await auditService.logAction({
-      tenantId,
-      userId,
-      action: "CREATE",
-      resource: "user",
-      resourceId,
-      meta: { title },
-    });
-
+      const performedById = req.user?.id
+      const result = await this.service.createUser(tenantId, req.body, performedById);
 
       return res
         .status(201)
@@ -602,10 +588,12 @@ export class UsersController {
     try {
       const tenantId = req.user!.tenantId;
       const userId = req.params.id;
+      const performedById = req.user?.id
 
-      const updated = await this.service.updateUser(tenantId, userId, req.body);
 
-      return res.json(successResponse('User updated successfully', updated));
+      const result = await this.service.updateUser(tenantId, userId, req.body, performedById);
+
+      return res.json(successResponse('User updated successfully', result));
     } catch (error) {
       next(error);
     }
@@ -764,8 +752,10 @@ export class UsersController {
     try {
       const tenantId = req.user!.tenantId;
       const userId = req.params.id;
+      const performedById = req.user?.id
 
-      const updated = await this.service.deactivateUser(tenantId, userId);
+
+      const updated = await this.service.deactivateUser(tenantId, userId, performedById);
 
       return res.json(
         successResponse('User deactivated successfully', updated)
@@ -902,8 +892,9 @@ export class UsersController {
     try {
       const tenantId = req.user!.tenantId;
       const userId = req.params.id;
+      const performedById = req.user?.id
 
-      await this.service.delete(tenantId, userId);
+      await this.service.delete(tenantId, userId, performedById);
 
       return res.json(successResponse('User deleted permanently', {}));
     } catch (error) {

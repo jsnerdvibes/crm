@@ -2,8 +2,7 @@ import { Response, NextFunction } from 'express';
 import { LeadsService } from './leads.service';
 import { successResponse } from '../../utils/response';
 import { AuthRequest } from '../../types/authRequest';
-import { LeadStatus } from '../../core/db';
-import { BadRequestError, ForbiddenError } from '../../core/error';
+import { ForbiddenError } from '../../core/error';
 
 export class LeadsController {
   constructor(private service: LeadsService) {}
@@ -177,7 +176,8 @@ export class LeadsController {
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const tenantId = req.user!.tenantId;
-      const result = await this.service.createLead(tenantId, req.body);
+      const performerId = req.user?.id
+      const result = await this.service.createLead(tenantId, req.body, performerId);
 
       return res
         .status(201)
@@ -507,7 +507,9 @@ export class LeadsController {
       const tenantId = req.user!.tenantId;
       const leadId = req.params.id;
 
-      const updatedLead = await this.service.updateLead(tenantId, leadId, req.body);
+      const performerId = req.user?.id
+
+      const updatedLead = await this.service.updateLead(tenantId, leadId, req.body, performerId);
 
       return res.json(successResponse('Lead updated successfully', updatedLead));
     } catch (error) {
@@ -643,7 +645,13 @@ export class LeadsController {
       const tenantId = req.user!.tenantId;
       const leadId = req.params.id;
 
-      await this.service.deleteLead(tenantId, leadId);
+      const performerId = req.user?.id
+
+      await this.service.deleteLead(
+        tenantId, 
+        leadId, 
+        performerId
+      );
 
       return res.json(successResponse('Lead deleted successfully', {}));
     } catch (error) {
@@ -801,9 +809,10 @@ export class LeadsController {
   try {
     const tenantId = req.user!.tenantId;
     const leadId = req.params.id;
+    const performerId = req.user?.id
     const { assignedToId } = req.body;
 
-    const result = await this.service.assignLead(tenantId, leadId, assignedToId);
+    const result = await this.service.assignLead(tenantId, leadId, assignedToId, performerId);
 
     return res.json(successResponse("Lead assigned successfully", result));
   } catch (error) {

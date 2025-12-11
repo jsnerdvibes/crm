@@ -184,12 +184,15 @@ export class ActivitiesController {
       const tenantId = req.user?.tenantId;
       const actorId = req.user?.id ?? null;
 
+      const performedById = req.user?.id
+
       if (!tenantId) throw new ForbiddenError("You are not authorized");
 
       const result = await this.service.createActivity(
         tenantId,
         actorId,
-        req.body
+        req.body,
+        performedById
       );
 
       return res
@@ -560,12 +563,15 @@ export class ActivitiesController {
       const tenantId = req.user?.tenantId;
       const activityId = req.params.id;
 
+      const performedById = req.user?.id
+
       if (!tenantId) throw new ForbiddenError("You are not authorized");
 
       const updated = await this.service.updateActivity(
         tenantId,
         activityId,
-        req.body
+        req.body,
+        performedById
       );
 
       return res.json(
@@ -684,10 +690,11 @@ export class ActivitiesController {
     try {
       const tenantId = req.user?.tenantId;
       const activityId = req.params.id;
+      const performedById = req.user?.id
 
       if (!tenantId) throw new ForbiddenError("You are not authorized");
 
-      await this.service.deleteActivity(tenantId, activityId);
+      await this.service.deleteActivity(tenantId, activityId,performedById);
 
       return res.json(successResponse("Activity deleted successfully", {}));
     } catch (error) {

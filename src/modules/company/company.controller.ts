@@ -155,7 +155,9 @@ export class CompanyController {
     try {
       const tenantId = req.user!.tenantId;
 
-      const result = await this.service.createCompany(tenantId, req.body);
+      const performedById = req.user?.id
+
+      const result = await this.service.createCompany(tenantId, req.body, performedById);
 
       return res
         .status(201)
@@ -344,11 +346,14 @@ export class CompanyController {
     try {
       const tenantId = req.user!.tenantId;
       const companyId = req.params.id;
+      const performedById = req.user?.id
+
 
       const updated = await this.service.updateCompany(
         tenantId,
         companyId,
-        req.body
+        req.body,
+        performedById
       );
 
       return res.json(
@@ -466,8 +471,9 @@ export class CompanyController {
     try {
       const tenantId = req.user!.tenantId;
       const companyId = req.params.id;
+      const performedById = req.user?.id
 
-      await this.service.deleteCompany(tenantId, companyId);
+      await this.service.deleteCompany(tenantId, companyId, performedById);
 
       return res.json(successResponse('Company deleted successfully'));
     } catch (error) {

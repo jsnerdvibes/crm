@@ -186,7 +186,9 @@ export class DealsController {
     try {
       const tenantId = req.user!.tenantId;
 
-      const result = await this.service.createDeal(tenantId, req.body);
+      const performedById = req.user?.id
+
+      const result = await this.service.createDeal(tenantId, req.body, performedById);
 
       return res
         .status(201)
@@ -542,7 +544,10 @@ export class DealsController {
       const tenantId = req.user!.tenantId;
       const dealId = req.params.id;
 
-      const updated = await this.service.updateDeal(tenantId, dealId, req.body);
+      const performedById = req.user?.id
+
+
+      const updated = await this.service.updateDeal(tenantId, dealId, req.body, performedById);
 
       return res.json(successResponse('Deal updated successfully', updated));
     } catch (error) {
@@ -659,7 +664,9 @@ export class DealsController {
       const tenantId = req.user!.tenantId;
       const dealId = req.params.id;
 
-      await this.service.deleteDeal(tenantId, dealId);
+      const performedById = req.user?.id
+
+      await this.service.deleteDeal(tenantId, dealId, performedById);
 
       return res.json(successResponse('Deal deleted successfully', {}));
     } catch (error) {
@@ -844,10 +851,13 @@ export class DealsController {
       const dealId = req.params.id;
       const { assignedToId } = req.body;
 
+      const performedById = req.user?.id
+
       const updated = await this.service.assignDeal(
         tenantId,
         dealId,
-        assignedToId
+        assignedToId,
+        performedById
       );
 
       return res.json(
@@ -1035,11 +1045,13 @@ export class DealsController {
       const tenantId = req.user!.tenantId;
       const dealId = req.params.id;
       const { stage } = req.body;
+      const performedById = req.user?.id
 
       const updated = await this.service.updateDealStage(
         tenantId,
         dealId,
-        stage
+        stage,
+        performedById
       );
 
       return res.json(

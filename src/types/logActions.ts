@@ -1,0 +1,17 @@
+export enum LogActions {
+  CREATE = 'CREATE',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+  DEACTIVATE = 'DEACTIVATE',
+  ASSIGNED = 'ASSIGNED',
+  UPDATE_STAGE = 'UPDATE_STAGE',
+}
+
+export enum LogResources {
+    USER = 'USER',
+    LEAD = 'LEAD',
+    DEAL = 'DEAL',
+    CONTACT = 'CONTACT',
+    COMPANY = 'COMPANY',
+    ACTIVITY = 'ACTIVITY'
+}

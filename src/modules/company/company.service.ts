@@ -10,6 +10,8 @@ import {
   NotFoundError,
 } from '../../core/error';
 import { logger } from '../../core/logger';
+import { logAudit } from '../../utils/audit.log';
+import { LogActions, LogResources } from '../../types/logActions';
 
 export class CompanyService {
   constructor(private repo: ICompanyRepository) {}
@@ -19,7 +21,8 @@ export class CompanyService {
   // -------------------------
   async createCompany(
     tenantId: string,
-    data: CreateCompanyDTO
+    data: CreateCompanyDTO,
+    performedById?:string
   ): Promise<CompanyResponse> {
     // Check duplicate name
     const existing = await this.repo.findByName(tenantId, data.name);
@@ -28,7 +31,20 @@ export class CompanyService {
     }
 
     const company = await this.repo.create(tenantId, data);
-    return this.sanitize(company);
+
+      const sanitized = this.sanitize(company);
+
+  // log audit
+  await logAudit(
+    tenantId,
+    performedById,
+    LogActions.CREATE,
+    LogResources.COMPANY,
+    company.id,
+    { title: company.name }
+  );
+
+  return sanitized;
   }
 
   // -------------------------
@@ -37,7 +53,8 @@ export class CompanyService {
   async updateCompany(
     tenantId: string,
     companyId: string,
-    data: UpdateCompanyDTO
+    data: UpdateCompanyDTO,
+    performedById?:string
   ): Promise<CompanyResponse> {
     const company = await this.repo.findById(tenantId, companyId);
     if (!company) throw new NotFoundError('Company not found');
@@ -51,7 +68,20 @@ export class CompanyService {
     }
 
     const updatedCompany = await this.repo.update(tenantId, companyId, data);
-    return this.sanitize(updatedCompany);
+
+      const sanitized = this.sanitize(updatedCompany);
+
+  // log audit
+  await logAudit(
+    tenantId,
+    performedById,
+    LogActions.UPDATE,
+    LogResources.COMPANY,
+    updatedCompany.id,
+    { title: updatedCompany.name }
+  );
+
+  return sanitized;
   }
 
   // -------------------------
@@ -59,13 +89,22 @@ export class CompanyService {
   // -------------------------
   async deleteCompany(
     tenantId: string,
-    companyId: string
+    companyId: string,
+    performedById?:string
   ): Promise<void> {
     const company = await this.repo.findById(tenantId, companyId);
     if (!company) throw new NotFoundError('Company not found');
 
-    await this.repo.delete(tenantId, companyId);
-    logger.info(`Company ${companyId} deleted successfully from tenant ${tenantId}`);
+  // log audit
+  await logAudit(
+    tenantId,
+    performedById,
+    LogActions.CREATE,
+    LogResources.COMPANY,
+    company.id,
+    { title: company.name }
+  );
+
   }
 
   // -------------------------

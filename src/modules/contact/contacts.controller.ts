@@ -166,7 +166,8 @@ export class ContactsController {
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const tenantId = req.user!.tenantId;
-      const contact = await this.service.createContact(tenantId, req.body);
+      const performedById = req.user?.id
+      const contact = await this.service.createContact(tenantId, req.body, performedById);
       return res
         .status(201)
         .json(successResponse('Contact created successfully', contact));
@@ -428,6 +429,7 @@ export class ContactsController {
     try {
       const tenantId = req.user!.tenantId;
       const contactId = req.params.id;
+
       const contact = await this.service.getContactById(tenantId, contactId);
       return res.json(successResponse('Contact retrieved', contact));
     } catch (error) {
@@ -621,7 +623,9 @@ export class ContactsController {
     try {
       const tenantId = req.user!.tenantId;
       const contactId = req.params.id;
-      const updated = await this.service.updateContact(tenantId, contactId, req.body);
+      const performedById = req.user?.id
+      
+      const updated = await this.service.updateContact(tenantId, contactId, req.body, performedById);
       return res.json(successResponse('Contact updated successfully', updated));
     } catch (error) {
       next(error);
@@ -735,7 +739,8 @@ export class ContactsController {
     try {
       const tenantId = req.user!.tenantId;
       const contactId = req.params.id;
-      await this.service.deleteContact(tenantId, contactId);
+      const performedById = req.user?.id
+      await this.service.deleteContact(tenantId, contactId, performedById);
       return res.json(successResponse('Contact deleted successfully'));
     } catch (error) {
       next(error);

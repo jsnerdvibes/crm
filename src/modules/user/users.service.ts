@@ -7,8 +7,9 @@ import {
   ForbiddenError,
   NotFoundError,
 } from '../../core/error';
-import { logger } from '../../core/logger';
 import { config } from '../../config';
+import { logAudit } from '../../utils/audit.log';
+import { LogActions, LogResources } from '../../types/logActions';
 
 export class UsersService {
   constructor(private repo: IUsersRepository) {}
@@ -18,7 +19,8 @@ export class UsersService {
   // -------------------------
   async createUser(
     tenantId: string,
-    data: CreateUserDTO
+    data: CreateUserDTO,
+    performedById?: string
   ): Promise<UserResponse> {
     // check if email already exists
     const existing = await this.repo.findByEmail(tenantId, data.email);
@@ -39,7 +41,19 @@ export class UsersService {
       data.name
     );
 
-    return this.sanitize(user);
+    const sanitized = this.sanitize(user);
+
+    await logAudit(
+    tenantId,
+    performedById,
+    LogActions.CREATE,
+    LogResources.USER,
+    user.id,
+    { title: user.name }
+  );
+
+
+    return sanitized;
   }
 
   // -------------------------
@@ -48,7 +62,8 @@ export class UsersService {
   async updateUser(
     tenantId: string,
     userId: string,
-    data: UpdateUserDTO
+    data: UpdateUserDTO,
+    performedById?:string
   ): Promise<UserResponse> {
     const user = await this.repo.findById(tenantId, userId);
     if (!user) throw new NotFoundError('User not found');
@@ -73,7 +88,21 @@ export class UsersService {
     }
 
     const updatedUser = await this.repo.update(tenantId, userId, updateData);
-    return this.sanitize(updatedUser);
+
+    const sanitized = this.sanitize(updatedUser);
+
+    await logAudit(
+    tenantId,
+    performedById,
+    LogActions.UPDATE,
+    LogResources.USER,
+    user.id,
+    { title: user.name }
+  );
+
+
+    return sanitized;
+
   }
 
   // -------------------------
@@ -81,7 +110,8 @@ export class UsersService {
   // -------------------------
   async deactivateUser(
     tenantId: string,
-    userId: string
+    userId: string,
+    performedById?:string
   ): Promise<UserResponse> {
     const userInfo = await this.repo.findById(tenantId, userId);
     if (!userInfo) throw new NotFoundError('User not found');
@@ -91,13 +121,31 @@ export class UsersService {
     }
 
     const user = await this.repo.deactivate(tenantId, userId);
-    return this.sanitize(user);
+
+    const sanitized = this.sanitize(user);
+
+    await logAudit(
+    tenantId,
+    performedById,
+    LogActions.DEACTIVATE,
+    LogResources.USER,
+    user.id,
+    { title: user.name }
+  );
+
+
+    return sanitized;
+
   }
 
   // -------------------------
   // Delete user
   // -------------------------
-  async delete(tenantId: string, userId: string): Promise<void> {
+  async delete(
+    tenantId: string, 
+    userId: string, 
+    performedById?: string
+  ): Promise<void> {
     const user = await this.repo.findById(tenantId, userId);
     if (!user) throw new NotFoundError('User not found');
 
@@ -107,7 +155,16 @@ export class UsersService {
 
     await this.repo.delete(tenantId, userId);
 
-    logger.info(`User ${userId} deleted successfully from tenant ${tenantId}`);
+    await logAudit(
+    tenantId,
+    performedById,
+    LogActions.DELETE,
+    LogResources.USER,
+    user.id,
+    { title: user.name }
+  );
+    
+    
   }
 
   // -------------------------
@@ -141,4 +198,5 @@ export class UsersService {
       updatedAt: user.updatedAt,
     };
   }
+
 }

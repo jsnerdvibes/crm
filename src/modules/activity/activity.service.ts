@@ -2,6 +2,8 @@ import { IActivitiesRepository } from "./activity.repo.interface";
 import { CreateActivityDTO, UpdateActivityDTO, ActivityResponse } from "./dto";
 import { Activity } from "../../core/db";
 import { BadRequestError, NotFoundError } from "../../core/error";
+import { logAudit } from "../../utils/audit.log";
+import { LogActions, LogResources } from "../../types/logActions";
 
 export class ActivitiesService {
   constructor(private repo: IActivitiesRepository) {}
@@ -12,11 +14,26 @@ export class ActivitiesService {
   async createActivity(
     tenantId: string,
     actorId: string | null,
-    data: CreateActivityDTO
+    data: CreateActivityDTO,
+    performedById?:string
   ): Promise<ActivityResponse> {
     try {
       const activity = await this.repo.create(tenantId, actorId, data);
-      return this.sanitize(activity);
+      const sanitized = this.sanitize(activity);
+      
+        // log audit
+        await logAudit(
+          tenantId,
+          performedById,
+          LogActions.CREATE,
+          LogResources.ACTIVITY,
+          activity.id,
+          { title: activity.body }
+        );
+      
+        return sanitized;
+
+
     } catch (error) {
       throw new BadRequestError(
         "Failed to create activity. Please verify input data."
@@ -30,23 +47,48 @@ export class ActivitiesService {
   async updateActivity(
     tenantId: string,
     activityId: string,
-    data: UpdateActivityDTO
+    data: UpdateActivityDTO,
+    performedById?:string
   ): Promise<ActivityResponse> {
     const existing = await this.repo.findById(tenantId, activityId);
     if (!existing) throw new NotFoundError("Activity not found");
 
     const updated = await this.repo.update(tenantId, activityId, data);
-    return this.sanitize(updated);
+
+    const sanitized = this.sanitize(updated);
+      
+        // log audit
+        await logAudit(
+          tenantId,
+          performedById,
+          LogActions.UPDATE,
+          LogResources.ACTIVITY,
+          updated.id,
+          { title: updated.body }
+        );
+      
+        return sanitized;
   }
 
   // -------------------------
   // Delete an activity
   // -------------------------
-  async deleteActivity(tenantId: string, activityId: string): Promise<void> {
+  async deleteActivity(tenantId: string, activityId: string, performedById?:string): Promise<void> {
     const existing = await this.repo.findById(tenantId, activityId);
     if (!existing) throw new NotFoundError("Activity not found");
 
     await this.repo.delete(tenantId, activityId);
+
+        // log audit
+        await logAudit(
+          tenantId,
+          performedById,
+          LogActions.UPDATE,
+          LogResources.ACTIVITY,
+          activityId,
+          { title: existing.body }
+        );
+
   }
 
   // -------------------------

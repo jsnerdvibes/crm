@@ -8,6 +8,8 @@ import {
 import { Contact } from '../../core/db';
 import { NotFoundError, BadRequestError } from '../../core/error';
 import { logger } from '../../core/logger';
+import { logAudit } from '../../utils/audit.log';
+import { LogActions, LogResources } from '../../types/logActions';
 
 export class ContactsService {
   constructor(private repo: IContactsRepository) {}
@@ -17,7 +19,8 @@ export class ContactsService {
   // -------------------------
   async createContact(
     tenantId: string,
-    data: CreateContactDTO
+    data: CreateContactDTO,
+    performedById?:string
   ): Promise<ContactResponse> {
     // Check if email already exists (if provided)
     if (data.email) {
@@ -28,7 +31,21 @@ export class ContactsService {
     }
 
     const contact = await this.repo.create(tenantId, data);
-    return this.sanitize(contact);
+
+    const sanitized = this.sanitize(contact);
+
+  // log audit
+  await logAudit(
+    tenantId,
+    performedById,
+    LogActions.CREATE,
+    LogResources.CONTACT,
+    contact.id,
+    { title: `${contact.firstName} ${contact.lastName}` }
+  );
+
+  return sanitized;
+
   }
 
   // -------------------------
@@ -37,7 +54,8 @@ export class ContactsService {
   async updateContact(
     tenantId: string,
     contactId: string,
-    data: UpdateContactDTO
+    data: UpdateContactDTO,
+    performedById?:string
   ): Promise<ContactResponse> {
     const existing = await this.repo.findById(tenantId, contactId);
     if (!existing) throw new NotFoundError('Contact not found');
@@ -49,18 +67,47 @@ export class ContactsService {
     }
 
     const updated = await this.repo.update(tenantId, contactId, data);
-    return this.sanitize(updated);
+    
+    const sanitized = this.sanitize(updated);
+
+  // log audit
+  await logAudit(
+    tenantId,
+    performedById,
+    LogActions.UPDATE,
+    LogResources.CONTACT,
+    updated.id,
+    { title: `${updated.firstName} ${updated.lastName}` }
+  );
+
+  return sanitized;
   }
 
   // -------------------------
   // Delete contact
   // -------------------------
-  async deleteContact(tenantId: string, contactId: string): Promise<void> {
+  async deleteContact(
+    tenantId: string, 
+    contactId: string,
+    performedById?:string
+  ): Promise<void> {
     const contact = await this.repo.findById(tenantId, contactId);
     if (!contact) throw new NotFoundError('Contact not found');
 
     await this.repo.delete(tenantId, contactId);
     logger.info(`Contact ${contactId} deleted from tenant ${tenantId}`);
+
+  // log audit
+  await logAudit(
+    tenantId,
+    performedById,
+    LogActions.UPDATE,
+    LogResources.CONTACT,
+    contact.id,
+    { title: `${contact.firstName} ${contact.lastName}` }
+  );
+
+
   }
 
   // -------------------------

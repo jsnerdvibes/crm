@@ -6,6 +6,8 @@ import {
 } from './dto';
 import { Deal, DealStage } from '../../core/db';
 import { BadRequestError, NotFoundError } from '../../core/error';
+import { logAudit } from '../../utils/audit.log';
+import { LogActions, LogResources } from '../../types/logActions';
 
 export class DealsService {
   constructor(private repo: IDealsRepository) {}
@@ -13,10 +15,28 @@ export class DealsService {
   // -------------------------------------
   // Create a new deal
   // -------------------------------------
-  async createDeal(tenantId: string, data: CreateDealDTO): Promise<DealResponse> {
+  async createDeal(
+    tenantId: string, 
+    data: CreateDealDTO,
+    performedById?: string
+  ): Promise<DealResponse> {
     try {
       const deal = await this.repo.create(tenantId, data);
-      return this.sanitize(deal);
+
+      const sanitized = this.sanitize(deal);
+
+  // log audit
+  await logAudit(
+    tenantId,
+    performedById,
+    LogActions.CREATE,
+    LogResources.DEAL,
+    deal.id,
+    { title: deal.title }
+  );
+
+  return sanitized;
+
     } catch (error) {
       throw new BadRequestError('Failed to create deal. Please check your input data.');
     }
@@ -28,23 +48,54 @@ export class DealsService {
   async updateDeal(
     tenantId: string,
     dealId: string,
-    data: UpdateDealDTO
+    data: UpdateDealDTO,
+    performedById?: string
   ): Promise<DealResponse> {
     const deal = await this.repo.findById(tenantId, dealId);
     if (!deal) throw new NotFoundError('Deal not found');
 
     const updated = await this.repo.update(tenantId, dealId, data);
-    return this.sanitize(updated);
-  }
+
+    const sanitized = this.sanitize(updated);
+
+  // log audit
+  await logAudit(
+    tenantId,
+    performedById,
+    LogActions.UPDATE,
+    LogResources.DEAL,
+    updated.id,
+    { title: updated.title }
+  );
+
+  return sanitized;
+}
 
   // -------------------------------------
   // Delete deal
   // -------------------------------------
-  async deleteDeal(tenantId: string, dealId: string): Promise<void> {
+  async deleteDeal(
+    tenantId: string, 
+    dealId: string, 
+    performedById?: string
+  ): Promise<void> {
     const deal = await this.repo.findById(tenantId, dealId);
     if (!deal) throw new NotFoundError('Deal not found');
 
     await this.repo.delete(tenantId, dealId);
+
+  // log audit
+  await logAudit(
+    tenantId,
+    performedById,
+    LogActions.DELETE,
+    LogResources.DEAL,
+    dealId,
+    { title: deal.title }
+  );
+
+
+
   }
 
   // -------------------------------------
@@ -63,13 +114,29 @@ export class DealsService {
   async assignDeal(
     tenantId: string,
     dealId: string,
-    assignedToId: string
+    assignedToId: string,
+    performedById?: string
   ): Promise<DealResponse> {
     const deal = await this.repo.findById(tenantId, dealId);
     if (!deal) throw new NotFoundError('Deal not found');
 
     const updated = await this.repo.assign(tenantId, dealId, assignedToId);
-    return this.sanitize(updated);
+
+
+    const sanitized = this.sanitize(updated);
+
+  // log audit
+  await logAudit(
+    tenantId,
+    performedById,
+    LogActions.ASSIGNED,
+    LogResources.DEAL,
+    updated.id,
+    { title: updated.title }
+  );
+
+  return sanitized;
+
   }
 
   // -------------------------------------
@@ -78,13 +145,28 @@ export class DealsService {
   async updateDealStage(
     tenantId: string,
     dealId: string,
-    stage: DealStage
+    stage: DealStage,
+    performedById?: string
   ): Promise<DealResponse> {
     const deal = await this.repo.findById(tenantId, dealId);
     if (!deal) throw new NotFoundError('Deal not found');
 
     const updated = await this.repo.updateStage(tenantId, dealId, stage);
-    return this.sanitize(updated);
+
+    const sanitized = this.sanitize(updated);
+
+  // log audit
+  await logAudit(
+    tenantId,
+    performedById,
+    LogActions.UPDATE_STAGE,
+    LogResources.DEAL,
+    updated.id,
+    { title: updated.title }
+  );
+
+  return sanitized;
+
   }
 
   // -------------------------------------
