@@ -2,6 +2,7 @@ import { Response, NextFunction } from 'express';
 import { UsersService } from './users.service';
 import { successResponse } from '../../utils/response';
 import { AuthRequest } from '../../types/authRequest';
+import { auditService } from '../audit';
 
 export class UsersController {
   constructor(private service: UsersService) {}
@@ -160,6 +161,20 @@ export class UsersController {
     try {
       const tenantId = req.user!.tenantId;
       const result = await this.service.createUser(tenantId, req.body);
+
+    const userId = req.user?.id;
+    const title = result.name;
+    const resourceId = result.id;
+
+    await auditService.logAction({
+      tenantId,
+      userId,
+      action: "CREATE",
+      resource: "user",
+      resourceId,
+      meta: { title },
+    });
+
 
       return res
         .status(201)
