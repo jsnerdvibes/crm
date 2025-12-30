@@ -973,4 +973,110 @@ findAll = async (req: AuthRequest, res: Response, next: NextFunction) => {
     next(error);
   }
 }
+
+
+
+
+// -------------------------
+// Convert Lead → Contact + Deal
+// -------------------------
+
+
+/**
+ * @swagger
+ * /api/v1/leads/{id}/convert:
+ *   post:
+ *     summary: Convert a lead into a contact and deal
+ *     description: |
+ *       Converts a qualified lead into a Contact and Deal within a transaction-safe flow.
+ *       Updates the lead status to QUALIFIED, creates a deal, associates it with a contact,
+ *       and logs the action in audit logs.
+ *     tags: [Leads]
+ *     security:
+ *       - bearerAuth: []
+ * 
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: Lead ID to convert
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *           example: bae66ea2-4ef8-4785-a4ae-87bc5495319c
+ * 
+ *     responses:
+ *       200:
+ *         description: Lead converted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Lead converted successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     leadId:
+ *                       type: string
+ *                       format: uuid
+ *                       example: bae66ea2-4ef8-4785-a4ae-87bc5495319c
+ *                     contactId:
+ *                       type: string
+ *                       format: uuid
+ *                       example: 8855f47a-7c38-437a-9175-015f36f73cd8
+ *                     dealId:
+ *                       type: string
+ *                       format: uuid
+ *                       example: 486c665c-b18a-4c47-882c-b9c3a7948192
+ * 
+ *       400:
+ *         description: Lead already converted or invalid request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/responses/BadRequest"
+ * 
+ *       404:
+ *         description: Lead not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/responses/NotFound"
+ * 
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/responses/ServerError"
+ */
+
+
+convertLead = async(req: any, res: any, next: any) => {
+  try {
+    const { id: leadId } = req.params;
+    const tenantId = req.user?.tenantId;
+    const performedById = req.user?.id;
+
+    const result = await this.service.convertLead(
+      tenantId,
+      leadId,
+      performedById
+    );
+
+    return res.status(200).json({
+      message: 'Lead converted successfully',
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+
+
 }

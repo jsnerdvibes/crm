@@ -1,4 +1,4 @@
-import { Deal, DealStage } from '../../core/db';
+import { Deal, DealStage, Prisma } from '../../core/db';
 
 export interface IDealsRepository {
   create(
@@ -58,4 +58,24 @@ export interface IDealsRepository {
       search?: string;
     }
   ): Promise<{ deals: Deal[]; total: number }>;
+
+
+    /**
+   * Create deal inside a transaction (used for lead conversion)
+   */
+  createTx(
+    tx: Prisma.TransactionClient,
+    data: {
+      tenantId: string;
+      title: string;
+      amount?: number | null;
+      probability?: number | null;
+      stage: DealStage;
+      companyId?: string | null;
+      assignedToId?: string | null;
+    }
+  ): Promise<Deal>;
+
+
+
 }

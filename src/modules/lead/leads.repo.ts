@@ -1,4 +1,4 @@
-import { prisma, Lead } from '../../core/db';
+import { prisma, Lead, Prisma } from '../../core/db';
 import { ILeadsRepository } from './leads.repo.interface';
 import { CreateLeadDTO, UpdateLeadDTO} from './dto';
 import { NotFoundError } from '../../core/error';
@@ -106,6 +106,40 @@ async getLeads(tenantId: string, filters: any) {
   const total = await prisma.lead.count({ where });
 
   return { leads, total };
+}
+
+
+async findByIdWithRelations(
+  tenantId: string,
+  leadId: string
+): Promise<Lead | null> {
+  return prisma.lead.findFirst({
+    where: {
+      id: leadId,
+      tenantId,
+    },
+    include: {
+      contact: true,
+      assignedTo: true,
+    },
+  });
+}
+
+
+
+async updateTx(
+  tx: Prisma.TransactionClient,
+  leadId: string,
+  data: Partial<Lead>
+): Promise<Lead> {
+  const lead = await tx.lead.update({
+    where: {
+      id: leadId,
+    },
+    data,
+  });
+
+  return lead;
 }
 
 

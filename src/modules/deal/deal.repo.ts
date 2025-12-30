@@ -1,4 +1,4 @@
-import { prisma, Deal, DealStage } from '../../core/db';
+import { prisma, Deal, DealStage, Prisma } from '../../core/db';
 import { IDealsRepository } from './deal.repo.interface';
 import { NotFoundError } from '../../core/error';
 
@@ -105,4 +105,26 @@ export class DealsRepository implements IDealsRepository {
 
     return { deals, total };
   }
+
+
+
+  async createTx(
+  tx: Prisma.TransactionClient,
+  data: {
+    tenantId: string;
+    title: string;
+    amount?: number | null;
+    probability?: number | null;
+    stage: DealStage;
+    companyId?: string | null;
+    assignedToId?: string | null;
+  }
+): Promise<Deal> {
+  return tx.deal.create({
+    data,
+  });
+}
+
+
+
 }

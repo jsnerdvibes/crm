@@ -1,13 +1,18 @@
 import { ILeadsRepository } from './leads.repo.interface';
 import { CreateLeadDTO, UpdateLeadDTO, LeadResponse } from './dto';
-import { Lead } from '../../core/db';
+import { DealStage, Lead, LeadStatus, prisma } from '../../core/db';
 import { BadRequestError, NotFoundError } from '../../core/error';
-import { auditService } from '../audit';
 import { logAudit } from '../../utils/audit.log';
 import { LogActions, LogResources } from '../../types/logActions';
+import { IContactsRepository } from '../contact/contacts.repo.interface';
+import { IDealsRepository } from '../deal/deal.repo.interface';
 
 export class LeadsService {
-  constructor(private repo: ILeadsRepository) {}
+  constructor(
+    private repo: ILeadsRepository,
+    private contactsRepo: IContactsRepository,
+    private dealsRepo: IDealsRepository
+  ) {}
 
   // -------------------------
   // Create a new lead
@@ -151,6 +156,77 @@ async getLeads(tenantId: string, filters: any) {
     total,
   };
 }
+
+
+// -------------------------
+// Convert Lead → Contact + Deal
+// -------------------------
+async convertLead(
+  tenantId: string,
+  leadId: string,
+  performedById?: string
+) {
+  // Fetch lead with relations
+  const lead = await this.repo.findByIdWithRelations(tenantId, leadId);
+
+  
+  if (!lead) throw new NotFoundError('Lead not found');
+
+  if (lead.status === LeadStatus.QUALIFIED) {
+    throw new BadRequestError('Lead already converted');
+  }
+
+  return prisma.$transaction(async (tx) => {
+    // 1️⃣ Create or reuse contact
+    const contact = lead.contactId
+  ? await this.contactsRepo.findById(tenantId, lead.contactId)
+  : await this.contactsRepo.createTx(tx, {
+      tenantId,
+      firstName: lead.title,
+    });
+
+if (!contact) {
+  throw new NotFoundError('Associated contact not found');
+}
+
+
+    // 2️⃣ Create deal
+    const deal = await this.dealsRepo.createTx(tx, {
+      tenantId,
+      title: lead.title,
+      stage: DealStage.QUALIFICATION,
+      assignedToId: lead.assignedToId ?? undefined,
+      companyId: contact.companyId ?? undefined,
+    });
+
+    // 3️⃣ Update lead
+    await this.repo.updateTx(tx, lead.id, {
+      status: LeadStatus.QUALIFIED,
+      contactId: contact.id,
+    });
+
+    // 4️⃣ Audit log
+    await logAudit(
+      tenantId,
+      performedById,
+      LogActions.CONVERT,
+      LogResources.LEAD,
+      lead.id,
+      {
+        contactId: contact.id,
+        dealId: deal.id,
+      }
+    );
+
+    return {
+      leadId: lead.id,
+      contactId: contact.id,
+      dealId: deal.id,
+    };
+  });
+}
+
+
 
 
   // -------------------------

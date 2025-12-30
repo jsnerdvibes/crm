@@ -3,7 +3,7 @@ import { auditService } from "../modules/audit";
     export const logAudit = async(
     tenantId: string,
     userId: string | undefined,
-    action: 'CREATE' | 'UPDATE' | 'DELETE' | 'DEACTIVATE' | 'ASSIGNED' | 'UPDATE_STAGE',
+    action: 'CREATE' | 'UPDATE' | 'DELETE' | 'DEACTIVATE' | 'ASSIGNED' | 'UPDATE_STAGE' | 'CONVERT',
     resource: string,
     resourceId: string,
     meta?: Record<string, any>

@@ -25,6 +25,12 @@ router.get("/", leadsController.findAll);
 router.post('/', validate(CreateLeadSchema), leadsController.create);
 
 
+// --------------------------------------
+// Convert lead → contact + deal
+// --------------------------------------
+router.post('/:id/convert', leadsController.convertLead);
+
+
 
 // --------------------------------------
 // Update a lead by ID

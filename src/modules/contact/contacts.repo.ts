@@ -1,6 +1,6 @@
 // src/modules/contacts/contacts.repo.ts
 
-import { prisma, Contact } from '../../core/db';
+import { prisma, Contact, Prisma } from '../../core/db';
 import { IContactsRepository } from './contacts.repo.interface';
 
 export class ContactsRepository implements IContactsRepository {
@@ -92,4 +92,24 @@ export class ContactsRepository implements IContactsRepository {
       where: { id: contactId, tenantId },
     });
   }
+
+
+  async createTx(
+  tx: Prisma.TransactionClient,
+  data: {
+    tenantId: string;
+    firstName: string;
+    lastName?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    companyId?: string | null;
+  }
+): Promise<Contact> {
+  return tx.contact.create({
+    data,
+  });
+}
+
+
+
 }

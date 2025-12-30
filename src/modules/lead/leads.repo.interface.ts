@@ -1,4 +1,4 @@
-import { Lead } from '../../core/db';
+import { Lead, Prisma } from '../../core/db';
 import { CreateLeadDTO, UpdateLeadDTO } from './dto';
 
 export interface ILeadsRepository {
@@ -42,6 +42,24 @@ export interface ILeadsRepository {
     assignedToId?: string;
   }
 ): Promise<{ leads: Lead[]; total: number }>;
+
+
+  /**
+   * Find lead by ID with relations (used for conversion)
+   */
+  findByIdWithRelations(
+    tenantId: string,
+    leadId: string
+  ): Promise<Lead | null>;
+
+  /**
+   * Update lead inside a transaction
+   */
+  updateTx(
+    tx: Prisma.TransactionClient,
+    leadId: string,
+    data: Partial<Lead>
+  ): Promise<Lead>;
 
 
 

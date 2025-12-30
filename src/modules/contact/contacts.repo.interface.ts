@@ -1,4 +1,4 @@
-import { Contact } from '../../core/db';
+import { Contact, Prisma } from '../../core/db';
 
 export interface IContactsRepository {
   /**
@@ -49,4 +49,22 @@ export interface IContactsRepository {
    * Delete a contact
    */
   delete(tenantId: string, contactId: string): Promise<void>;
+
+
+    /**
+   * Create contact inside a transaction (used for lead conversion)
+   */
+  createTx(
+    tx: Prisma.TransactionClient,
+    data: {
+      tenantId: string;
+      firstName: string;
+      lastName?: string | null;
+      email?: string | null;
+      phone?: string | null;
+      companyId?: string | null;
+    }
+  ): Promise<Contact>;
+
+
 }
