@@ -1,9 +1,9 @@
-import { IActivitiesRepository } from "./activity.repo.interface";
-import { CreateActivityDTO, UpdateActivityDTO, ActivityResponse } from "./dto";
-import { Activity } from "../../core/db";
-import { BadRequestError, NotFoundError } from "../../core/error";
-import { logAudit } from "../../utils/audit.log";
-import { LogActions, LogResources } from "../../types/logActions";
+import { IActivitiesRepository } from './activity.repo.interface';
+import { CreateActivityDTO, UpdateActivityDTO, ActivityResponse } from './dto';
+import { Activity } from '../../core/db';
+import { BadRequestError, NotFoundError } from '../../core/error';
+import { logAudit } from '../../utils/audit.log';
+import { LogActions, LogResources } from '../../types/logActions';
 
 export class ActivitiesService {
   constructor(private repo: IActivitiesRepository) {}
@@ -15,28 +15,26 @@ export class ActivitiesService {
     tenantId: string,
     actorId: string | null,
     data: CreateActivityDTO,
-    performedById?:string
+    performedById?: string
   ): Promise<ActivityResponse> {
     try {
       const activity = await this.repo.create(tenantId, actorId, data);
       const sanitized = this.sanitize(activity);
-      
-        // log audit
-        await logAudit(
-          tenantId,
-          performedById,
-          LogActions.CREATE,
-          LogResources.ACTIVITY,
-          activity.id,
-          { title: activity.body }
-        );
-      
-        return sanitized;
 
+      // log audit
+      await logAudit(
+        tenantId,
+        performedById,
+        LogActions.CREATE,
+        LogResources.ACTIVITY,
+        activity.id,
+        { title: activity.body }
+      );
 
+      return sanitized;
     } catch (error) {
       throw new BadRequestError(
-        "Failed to create activity. Please verify input data."
+        'Failed to create activity. Please verify input data.'
       );
     }
   }
@@ -48,47 +46,50 @@ export class ActivitiesService {
     tenantId: string,
     activityId: string,
     data: UpdateActivityDTO,
-    performedById?:string
+    performedById?: string
   ): Promise<ActivityResponse> {
     const existing = await this.repo.findById(tenantId, activityId);
-    if (!existing) throw new NotFoundError("Activity not found");
+    if (!existing) throw new NotFoundError('Activity not found');
 
     const updated = await this.repo.update(tenantId, activityId, data);
 
     const sanitized = this.sanitize(updated);
-      
-        // log audit
-        await logAudit(
-          tenantId,
-          performedById,
-          LogActions.UPDATE,
-          LogResources.ACTIVITY,
-          updated.id,
-          { title: updated.body }
-        );
-      
-        return sanitized;
+
+    // log audit
+    await logAudit(
+      tenantId,
+      performedById,
+      LogActions.UPDATE,
+      LogResources.ACTIVITY,
+      updated.id,
+      { title: updated.body }
+    );
+
+    return sanitized;
   }
 
   // -------------------------
   // Delete an activity
   // -------------------------
-  async deleteActivity(tenantId: string, activityId: string, performedById?:string): Promise<void> {
+  async deleteActivity(
+    tenantId: string,
+    activityId: string,
+    performedById?: string
+  ): Promise<void> {
     const existing = await this.repo.findById(tenantId, activityId);
-    if (!existing) throw new NotFoundError("Activity not found");
+    if (!existing) throw new NotFoundError('Activity not found');
 
     await this.repo.delete(tenantId, activityId);
 
-        // log audit
-        await logAudit(
-          tenantId,
-          performedById,
-          LogActions.UPDATE,
-          LogResources.ACTIVITY,
-          activityId,
-          { title: existing.body }
-        );
-
+    // log audit
+    await logAudit(
+      tenantId,
+      performedById,
+      LogActions.UPDATE,
+      LogResources.ACTIVITY,
+      activityId,
+      { title: existing.body }
+    );
   }
 
   // -------------------------
@@ -99,7 +100,7 @@ export class ActivitiesService {
     activityId: string
   ): Promise<ActivityResponse> {
     const activity = await this.repo.findById(tenantId, activityId);
-    if (!activity) throw new NotFoundError("Activity not found");
+    if (!activity) throw new NotFoundError('Activity not found');
 
     return this.sanitize(activity);
   }
@@ -111,8 +112,10 @@ export class ActivitiesService {
     const page = filters.page || 1;
     const limit = filters.limit || 20;
 
-    const { activities, total } =
-      await this.repo.getActivities(tenantId, filters);
+    const { activities, total } = await this.repo.getActivities(
+      tenantId,
+      filters
+    );
 
     return {
       activities: activities.map((a) => this.sanitize(a)),
@@ -131,7 +134,7 @@ export class ActivitiesService {
       tenantId: activity.tenantId,
       actorId: activity.actorId,
       type: activity.type,
-      targetType: activity.targetType as ActivityResponse["targetType"],
+      targetType: activity.targetType as ActivityResponse['targetType'],
       targetId: activity.targetId,
       body: activity.body ?? null,
       dueAt: activity.dueAt ?? null,

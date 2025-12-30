@@ -7,10 +7,7 @@ import { z } from 'zod';
 export const CreateCompanySchema = z.object({
   name: z.string().min(1, { message: 'Company name is required' }),
   website: z.string().url({ message: 'Invalid website URL' }).optional(),
-  phone: z
-    .string()
-    .min(6, { message: 'Phone number is too short' })
-    .optional(),
+  phone: z.string().min(6, { message: 'Phone number is too short' }).optional(),
   address: z.string().optional(),
 });
 

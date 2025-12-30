@@ -1,9 +1,5 @@
 import { IDealsRepository } from './deal.repo.interface';
-import {
-  CreateDealDTO,
-  UpdateDealDTO,
-  DealResponse,
-} from './dto';
+import { CreateDealDTO, UpdateDealDTO, DealResponse } from './dto';
 import { Deal, DealStage } from '../../core/db';
 import { BadRequestError, NotFoundError } from '../../core/error';
 import { logAudit } from '../../utils/audit.log';
@@ -16,7 +12,7 @@ export class DealsService {
   // Create a new deal
   // -------------------------------------
   async createDeal(
-    tenantId: string, 
+    tenantId: string,
     data: CreateDealDTO,
     performedById?: string
   ): Promise<DealResponse> {
@@ -25,20 +21,21 @@ export class DealsService {
 
       const sanitized = this.sanitize(deal);
 
-  // log audit
-  await logAudit(
-    tenantId,
-    performedById,
-    LogActions.CREATE,
-    LogResources.DEAL,
-    deal.id,
-    { title: deal.title }
-  );
+      // log audit
+      await logAudit(
+        tenantId,
+        performedById,
+        LogActions.CREATE,
+        LogResources.DEAL,
+        deal.id,
+        { title: deal.title }
+      );
 
-  return sanitized;
-
+      return sanitized;
     } catch (error) {
-      throw new BadRequestError('Failed to create deal. Please check your input data.');
+      throw new BadRequestError(
+        'Failed to create deal. Please check your input data.'
+      );
     }
   }
 
@@ -58,25 +55,25 @@ export class DealsService {
 
     const sanitized = this.sanitize(updated);
 
-  // log audit
-  await logAudit(
-    tenantId,
-    performedById,
-    LogActions.UPDATE,
-    LogResources.DEAL,
-    updated.id,
-    { title: updated.title }
-  );
+    // log audit
+    await logAudit(
+      tenantId,
+      performedById,
+      LogActions.UPDATE,
+      LogResources.DEAL,
+      updated.id,
+      { title: updated.title }
+    );
 
-  return sanitized;
-}
+    return sanitized;
+  }
 
   // -------------------------------------
   // Delete deal
   // -------------------------------------
   async deleteDeal(
-    tenantId: string, 
-    dealId: string, 
+    tenantId: string,
+    dealId: string,
     performedById?: string
   ): Promise<void> {
     const deal = await this.repo.findById(tenantId, dealId);
@@ -84,18 +81,15 @@ export class DealsService {
 
     await this.repo.delete(tenantId, dealId);
 
-  // log audit
-  await logAudit(
-    tenantId,
-    performedById,
-    LogActions.DELETE,
-    LogResources.DEAL,
-    dealId,
-    { title: deal.title }
-  );
-
-
-
+    // log audit
+    await logAudit(
+      tenantId,
+      performedById,
+      LogActions.DELETE,
+      LogResources.DEAL,
+      dealId,
+      { title: deal.title }
+    );
   }
 
   // -------------------------------------
@@ -122,21 +116,19 @@ export class DealsService {
 
     const updated = await this.repo.assign(tenantId, dealId, assignedToId);
 
-
     const sanitized = this.sanitize(updated);
 
-  // log audit
-  await logAudit(
-    tenantId,
-    performedById,
-    LogActions.ASSIGNED,
-    LogResources.DEAL,
-    updated.id,
-    { title: updated.title }
-  );
+    // log audit
+    await logAudit(
+      tenantId,
+      performedById,
+      LogActions.ASSIGNED,
+      LogResources.DEAL,
+      updated.id,
+      { title: updated.title }
+    );
 
-  return sanitized;
-
+    return sanitized;
   }
 
   // -------------------------------------
@@ -155,18 +147,17 @@ export class DealsService {
 
     const sanitized = this.sanitize(updated);
 
-  // log audit
-  await logAudit(
-    tenantId,
-    performedById,
-    LogActions.UPDATE_STAGE,
-    LogResources.DEAL,
-    updated.id,
-    { title: updated.title }
-  );
+    // log audit
+    await logAudit(
+      tenantId,
+      performedById,
+      LogActions.UPDATE_STAGE,
+      LogResources.DEAL,
+      updated.id,
+      { title: updated.title }
+    );
 
-  return sanitized;
-
+    return sanitized;
   }
 
   // -------------------------------------

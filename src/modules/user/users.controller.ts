@@ -159,8 +159,12 @@ export class UsersController {
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const tenantId = req.user!.tenantId;
-      const performedById = req.user?.id
-      const result = await this.service.createUser(tenantId, req.body, performedById);
+      const performedById = req.user?.id;
+      const result = await this.service.createUser(
+        tenantId,
+        req.body,
+        performedById
+      );
 
       return res
         .status(201)
@@ -588,10 +592,14 @@ export class UsersController {
     try {
       const tenantId = req.user!.tenantId;
       const userId = req.params.id;
-      const performedById = req.user?.id
+      const performedById = req.user?.id;
 
-
-      const result = await this.service.updateUser(tenantId, userId, req.body, performedById);
+      const result = await this.service.updateUser(
+        tenantId,
+        userId,
+        req.body,
+        performedById
+      );
 
       return res.json(successResponse('User updated successfully', result));
     } catch (error) {
@@ -752,10 +760,13 @@ export class UsersController {
     try {
       const tenantId = req.user!.tenantId;
       const userId = req.params.id;
-      const performedById = req.user?.id
+      const performedById = req.user?.id;
 
-
-      const updated = await this.service.deactivateUser(tenantId, userId, performedById);
+      const updated = await this.service.deactivateUser(
+        tenantId,
+        userId,
+        performedById
+      );
 
       return res.json(
         successResponse('User deactivated successfully', updated)
@@ -892,7 +903,7 @@ export class UsersController {
     try {
       const tenantId = req.user!.tenantId;
       const userId = req.params.id;
-      const performedById = req.user?.id
+      const performedById = req.user?.id;
 
       await this.service.delete(tenantId, userId, performedById);
 

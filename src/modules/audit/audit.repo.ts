@@ -1,6 +1,6 @@
-import { prisma, AuditLog } from "../../core/db";
-import { IAuditRepository } from "./audit.repo.interface";
-import { CreateAuditLogDTO, AuditLogQueryDTO } from "./dto";
+import { prisma, AuditLog } from '../../core/db';
+import { IAuditRepository } from './audit.repo.interface';
+import { CreateAuditLogDTO, AuditLogQueryDTO } from './dto';
 
 export class AuditRepository implements IAuditRepository {
   /**
@@ -14,7 +14,7 @@ export class AuditRepository implements IAuditRepository {
         action: data.action,
         resource: data.resource,
         resourceId: data.resourceId,
-        meta: data.meta || {},   // MySQL JSON supported
+        meta: data.meta || {}, // MySQL JSON supported
       },
     });
   }
@@ -47,7 +47,7 @@ export class AuditRepository implements IAuditRepository {
       where,
       skip,
       take: limit,
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     const total = await prisma.auditLog.count({ where });

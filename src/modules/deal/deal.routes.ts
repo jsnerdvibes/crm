@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import { dealsController } from './index';
 import { validate } from '../../middlewares/validate';
-import { CreateDealSchema, UpdateDealSchema, UpdateDealStageSchema } from './dto';
+import {
+  CreateDealSchema,
+  UpdateDealSchema,
+  UpdateDealStageSchema,
+} from './dto';
 import { authenticate } from '../../middlewares/auth';
 
 const router = Router();
@@ -37,7 +41,11 @@ router.patch('/:id/assign', dealsController.assignDeal);
 // --------------------------------------
 // Update deal stage (pipeline movement)
 // --------------------------------------
-router.patch('/:id/stage', validate(UpdateDealStageSchema), dealsController.updateStage);
+router.patch(
+  '/:id/stage',
+  validate(UpdateDealStageSchema),
+  dealsController.updateStage
+);
 
 // --------------------------------------
 // Get a single deal by ID

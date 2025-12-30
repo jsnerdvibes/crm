@@ -106,25 +106,20 @@ export class DealsRepository implements IDealsRepository {
     return { deals, total };
   }
 
-
-
   async createTx(
-  tx: Prisma.TransactionClient,
-  data: {
-    tenantId: string;
-    title: string;
-    amount?: number | null;
-    probability?: number | null;
-    stage: DealStage;
-    companyId?: string | null;
-    assignedToId?: string | null;
+    tx: Prisma.TransactionClient,
+    data: {
+      tenantId: string;
+      title: string;
+      amount?: number | null;
+      probability?: number | null;
+      stage: DealStage;
+      companyId?: string | null;
+      assignedToId?: string | null;
+    }
+  ): Promise<Deal> {
+    return tx.deal.create({
+      data,
+    });
   }
-): Promise<Deal> {
-  return tx.deal.create({
-    data,
-  });
-}
-
-
-
 }

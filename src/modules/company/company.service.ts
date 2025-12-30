@@ -1,14 +1,7 @@
 import { ICompanyRepository } from './company.repo.interface';
-import {
-  CreateCompanyDTO,
-  UpdateCompanyDTO,
-  CompanyResponse,
-} from './dto';
+import { CreateCompanyDTO, UpdateCompanyDTO, CompanyResponse } from './dto';
 import { Company } from '../../core/db';
-import {
-  BadRequestError,
-  NotFoundError,
-} from '../../core/error';
+import { BadRequestError, NotFoundError } from '../../core/error';
 import { logger } from '../../core/logger';
 import { logAudit } from '../../utils/audit.log';
 import { LogActions, LogResources } from '../../types/logActions';
@@ -22,7 +15,7 @@ export class CompanyService {
   async createCompany(
     tenantId: string,
     data: CreateCompanyDTO,
-    performedById?:string
+    performedById?: string
   ): Promise<CompanyResponse> {
     // Check duplicate name
     const existing = await this.repo.findByName(tenantId, data.name);
@@ -32,19 +25,19 @@ export class CompanyService {
 
     const company = await this.repo.create(tenantId, data);
 
-      const sanitized = this.sanitize(company);
+    const sanitized = this.sanitize(company);
 
-  // log audit
-  await logAudit(
-    tenantId,
-    performedById,
-    LogActions.CREATE,
-    LogResources.COMPANY,
-    company.id,
-    { title: company.name }
-  );
+    // log audit
+    await logAudit(
+      tenantId,
+      performedById,
+      LogActions.CREATE,
+      LogResources.COMPANY,
+      company.id,
+      { title: company.name }
+    );
 
-  return sanitized;
+    return sanitized;
   }
 
   // -------------------------
@@ -54,7 +47,7 @@ export class CompanyService {
     tenantId: string,
     companyId: string,
     data: UpdateCompanyDTO,
-    performedById?:string
+    performedById?: string
   ): Promise<CompanyResponse> {
     const company = await this.repo.findById(tenantId, companyId);
     if (!company) throw new NotFoundError('Company not found');
@@ -63,25 +56,27 @@ export class CompanyService {
     if (data.name && data.name !== company.name) {
       const existing = await this.repo.findByName(tenantId, data.name);
       if (existing) {
-        throw new BadRequestError('Another company with this name already exists');
+        throw new BadRequestError(
+          'Another company with this name already exists'
+        );
       }
     }
 
     const updatedCompany = await this.repo.update(tenantId, companyId, data);
 
-      const sanitized = this.sanitize(updatedCompany);
+    const sanitized = this.sanitize(updatedCompany);
 
-  // log audit
-  await logAudit(
-    tenantId,
-    performedById,
-    LogActions.UPDATE,
-    LogResources.COMPANY,
-    updatedCompany.id,
-    { title: updatedCompany.name }
-  );
+    // log audit
+    await logAudit(
+      tenantId,
+      performedById,
+      LogActions.UPDATE,
+      LogResources.COMPANY,
+      updatedCompany.id,
+      { title: updatedCompany.name }
+    );
 
-  return sanitized;
+    return sanitized;
   }
 
   // -------------------------
@@ -90,23 +85,22 @@ export class CompanyService {
   async deleteCompany(
     tenantId: string,
     companyId: string,
-    performedById?:string
+    performedById?: string
   ): Promise<void> {
     const company = await this.repo.findById(tenantId, companyId);
     if (!company) throw new NotFoundError('Company not found');
 
-  // log audit
-  await logAudit(
-    tenantId,
-    performedById,
-    LogActions.DELETE,
-    LogResources.COMPANY,
-    company.id,
-    { title: company.name }
-  );
+    // log audit
+    await logAudit(
+      tenantId,
+      performedById,
+      LogActions.DELETE,
+      LogResources.COMPANY,
+      company.id,
+      { title: company.name }
+    );
 
-  await this.repo.delete(tenantId, companyId)
-
+    await this.repo.delete(tenantId, companyId);
   }
 
   // -------------------------

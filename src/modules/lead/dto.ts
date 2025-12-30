@@ -35,8 +35,6 @@ export const UpdateLeadSchema = z.object({
 
 export type UpdateLeadDTO = z.infer<typeof UpdateLeadSchema>;
 
-
-
 /**
  * Assign Lead DTO
  * Assign a lead to a user
@@ -47,8 +45,6 @@ export const AssignLeadSchema = z.object({
 });
 
 export type AssignLeadDTO = z.infer<typeof AssignLeadSchema>;
-
-
 
 /**
  * Response Types

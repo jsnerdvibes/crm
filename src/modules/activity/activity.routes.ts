@@ -1,8 +1,8 @@
-import { Router } from "express";
-import { activitiesController } from "./index";
-import { validate } from "../../middlewares/validate";
-import { CreateActivitySchema, UpdateActivitySchema } from "./dto";
-import { authenticate } from "../../middlewares/auth";
+import { Router } from 'express';
+import { activitiesController } from './index';
+import { validate } from '../../middlewares/validate';
+import { CreateActivitySchema, UpdateActivitySchema } from './dto';
+import { authenticate } from '../../middlewares/auth';
 
 const router = Router();
 
@@ -13,18 +13,18 @@ router.use(authenticate);
 // Get all activities (timeline, with filters)
 // GET /activities?targetType=Lead&targetId=123
 // --------------------------------------
-router.get("/", activitiesController.findAll);
+router.get('/', activitiesController.findAll);
 
 // --------------------------------------
 // Create a new activity
 // --------------------------------------
-router.post("/", validate(CreateActivitySchema), activitiesController.create);
+router.post('/', validate(CreateActivitySchema), activitiesController.create);
 
 // --------------------------------------
 // Update an activity by ID
 // --------------------------------------
 router.patch(
-  "/:id",
+  '/:id',
   validate(UpdateActivitySchema),
   activitiesController.update
 );
@@ -32,11 +32,11 @@ router.patch(
 // --------------------------------------
 // Delete an activity by ID
 // --------------------------------------
-router.delete("/:id", activitiesController.delete);
+router.delete('/:id', activitiesController.delete);
 
 // --------------------------------------
 // Get a single activity by ID
 // --------------------------------------
-router.get("/:id", activitiesController.findById);
+router.get('/:id', activitiesController.findById);
 
 export default router;

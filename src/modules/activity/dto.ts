@@ -22,10 +22,7 @@ export const CreateActivitySchema = z.object({
 
   body: z.string().optional(),
 
-  dueAt: z
-    .string()
-    .datetime({ offset: true })
-    .optional(),
+  dueAt: z.string().datetime({ offset: true }).optional(),
 
   completed: z.boolean().optional(),
 });
@@ -38,11 +35,7 @@ export type CreateActivityDTO = z.infer<typeof CreateActivitySchema>;
  */
 export const UpdateActivitySchema = z.object({
   body: z.string().optional(),
-  dueAt: z
-    .string()
-    .datetime({ offset: true })
-    .optional()
-    .nullable(),
+  dueAt: z.string().datetime({ offset: true }).optional().nullable(),
   completed: z.boolean().optional(),
 });
 

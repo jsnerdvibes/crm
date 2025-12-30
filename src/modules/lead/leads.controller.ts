@@ -12,172 +12,176 @@ export class LeadsController {
   // --------------------------------------
 
   /**
- * @swagger
- * /api/v1/leads:
- *   post:
- *     summary: Create a new lead within the tenant
- *     tags: [Leads]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 example: "New Website Lead"
- *               description:
- *                 type: string
- *                 example: "Lead interested in website development"
- *               source:
- *                 type: string
- *                 example: "LinkedIn"
- *               status:
- *                 type: string
- *                 enum: [NEW, IN_PROGRESS, QUALIFIED, LOST, WON]
- *                 example: "NEW"
- *               contactId:
- *                 type: string
- *                 format: uuid
- *                 nullable: true
- *                 example: "b3d1ce51-6e1e-4fa2-b39f-3a7d1f9a0001"
- *               assignedToId:
- *                 type: string
- *                 format: uuid
- *                 nullable: true
- *                 example: "7a19fcd5-33b6-49fb-8aab-a2e775600002"
- *     responses:
- *       201:
- *         description: Lead created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "success"
- *                 message:
- *                   type: string
- *                   example: "Lead created successfully"
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "uuid-of-created-lead"
- *                     title:
- *                       type: string
- *                       example: "New Website Lead"
- *                     description:
- *                       type: string
- *                       example: "Lead interested in website development"
- *                     source:
- *                       type: string
- *                       example: "LinkedIn"
- *                     status:
- *                       type: string
- *                       example: "NEW"
- *                     tenantId:
- *                       type: string
- *                       example: "uuid-of-tenant"
- *                     contactId:
- *                       type: string
- *                       nullable: true
- *                       example: "b3d1ce51-6e1e-4fa2-b39f-3a7d1f9a0001"
- *                     assignedToId:
- *                       type: string
- *                       nullable: true
- *                       example: "7a19fcd5-33b6-49fb-8aab-a2e775600002"
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-12-05T12:00:00.000Z"
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-12-05T12:00:00.000Z"
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       422:
- *         description: Validation errors (e.g., missing title or invalid UUID)
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Validation failed"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       field:
- *                         type: string
- *                         example: "title"
- *                       message:
- *                         type: string
- *                         example: "Title is required"
- *       403:
- *         description: Forbidden (e.g., user not authorized)
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Forbidden"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       500:
- *         description: Internal Server Error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Something went wrong"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- */
+   * @swagger
+   * /api/v1/leads:
+   *   post:
+   *     summary: Create a new lead within the tenant
+   *     tags: [Leads]
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               title:
+   *                 type: string
+   *                 example: "New Website Lead"
+   *               description:
+   *                 type: string
+   *                 example: "Lead interested in website development"
+   *               source:
+   *                 type: string
+   *                 example: "LinkedIn"
+   *               status:
+   *                 type: string
+   *                 enum: [NEW, IN_PROGRESS, QUALIFIED, LOST, WON]
+   *                 example: "NEW"
+   *               contactId:
+   *                 type: string
+   *                 format: uuid
+   *                 nullable: true
+   *                 example: "b3d1ce51-6e1e-4fa2-b39f-3a7d1f9a0001"
+   *               assignedToId:
+   *                 type: string
+   *                 format: uuid
+   *                 nullable: true
+   *                 example: "7a19fcd5-33b6-49fb-8aab-a2e775600002"
+   *     responses:
+   *       201:
+   *         description: Lead created successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "success"
+   *                 message:
+   *                   type: string
+   *                   example: "Lead created successfully"
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     id:
+   *                       type: string
+   *                       example: "uuid-of-created-lead"
+   *                     title:
+   *                       type: string
+   *                       example: "New Website Lead"
+   *                     description:
+   *                       type: string
+   *                       example: "Lead interested in website development"
+   *                     source:
+   *                       type: string
+   *                       example: "LinkedIn"
+   *                     status:
+   *                       type: string
+   *                       example: "NEW"
+   *                     tenantId:
+   *                       type: string
+   *                       example: "uuid-of-tenant"
+   *                     contactId:
+   *                       type: string
+   *                       nullable: true
+   *                       example: "b3d1ce51-6e1e-4fa2-b39f-3a7d1f9a0001"
+   *                     assignedToId:
+   *                       type: string
+   *                       nullable: true
+   *                       example: "7a19fcd5-33b6-49fb-8aab-a2e775600002"
+   *                     createdAt:
+   *                       type: string
+   *                       format: date-time
+   *                       example: "2025-12-05T12:00:00.000Z"
+   *                     updatedAt:
+   *                       type: string
+   *                       format: date-time
+   *                       example: "2025-12-05T12:00:00.000Z"
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       422:
+   *         description: Validation errors (e.g., missing title or invalid UUID)
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Validation failed"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       field:
+   *                         type: string
+   *                         example: "title"
+   *                       message:
+   *                         type: string
+   *                         example: "Title is required"
+   *       403:
+   *         description: Forbidden (e.g., user not authorized)
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Forbidden"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       500:
+   *         description: Internal Server Error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Something went wrong"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   */
 
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const tenantId = req.user!.tenantId;
-      const performerId = req.user?.id
-      const result = await this.service.createLead(tenantId, req.body, performerId);
+      const performerId = req.user?.id;
+      const result = await this.service.createLead(
+        tenantId,
+        req.body,
+        performerId
+      );
 
       return res
         .status(201)
@@ -192,137 +196,137 @@ export class LeadsController {
   // --------------------------------------
 
   /**
- * @swagger
- * /api/v1/leads/{id}:
- *   get:
- *     summary: Get a lead by ID within the tenant
- *     tags: [Leads]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *         example: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
- *     responses:
- *       200:
- *         description: Lead retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "success"
- *                 message:
- *                   type: string
- *                   example: "Lead retrieved successfully"
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
- *                     title:
- *                       type: string
- *                       example: "New Website Lead"
- *                     description:
- *                       type: string
- *                       example: "Lead interested in website development"
- *                     source:
- *                       type: string
- *                       example: "LinkedIn"
- *                     status:
- *                       type: string
- *                       example: "NEW"
- *                     tenantId:
- *                       type: string
- *                       example: "uuid-of-tenant"
- *                     contactId:
- *                       type: string
- *                       nullable: true
- *                       example: "b3d1ce51-6e1e-4fa2-b39f-3a7d1f9a0001"
- *                     assignedToId:
- *                       type: string
- *                       nullable: true
- *                       example: "7a19fcd5-33b6-49fb-8aab-a2e775600002"
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-12-05T12:00:00.000Z"
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-12-05T12:00:00.000Z"
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       404:
- *         description: Lead not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Lead not found"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       403:
- *         description: Forbidden (tenant mismatch or unauthorized)
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Forbidden"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       500:
- *         description: Internal Server Error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Something went wrong"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- */
+   * @swagger
+   * /api/v1/leads/{id}:
+   *   get:
+   *     summary: Get a lead by ID within the tenant
+   *     tags: [Leads]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         example: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
+   *     responses:
+   *       200:
+   *         description: Lead retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "success"
+   *                 message:
+   *                   type: string
+   *                   example: "Lead retrieved successfully"
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     id:
+   *                       type: string
+   *                       example: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
+   *                     title:
+   *                       type: string
+   *                       example: "New Website Lead"
+   *                     description:
+   *                       type: string
+   *                       example: "Lead interested in website development"
+   *                     source:
+   *                       type: string
+   *                       example: "LinkedIn"
+   *                     status:
+   *                       type: string
+   *                       example: "NEW"
+   *                     tenantId:
+   *                       type: string
+   *                       example: "uuid-of-tenant"
+   *                     contactId:
+   *                       type: string
+   *                       nullable: true
+   *                       example: "b3d1ce51-6e1e-4fa2-b39f-3a7d1f9a0001"
+   *                     assignedToId:
+   *                       type: string
+   *                       nullable: true
+   *                       example: "7a19fcd5-33b6-49fb-8aab-a2e775600002"
+   *                     createdAt:
+   *                       type: string
+   *                       format: date-time
+   *                       example: "2025-12-05T12:00:00.000Z"
+   *                     updatedAt:
+   *                       type: string
+   *                       format: date-time
+   *                       example: "2025-12-05T12:00:00.000Z"
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       404:
+   *         description: Lead not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Lead not found"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       403:
+   *         description: Forbidden (tenant mismatch or unauthorized)
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Forbidden"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       500:
+   *         description: Internal Server Error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Something went wrong"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   */
 
   findById = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
@@ -341,177 +345,184 @@ export class LeadsController {
   // Update a lead
   // --------------------------------------
 
-/**
- * @swagger
- * /api/v1/leads/{id}:
- *   patch:
- *     summary: Update a lead within the tenant
- *     tags: [Leads]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *         example: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 example: "Updated Website Lead"
- *               description:
- *                 type: string
- *                 example: "Lead is now highly interested after demo"
- *               source:
- *                 type: string
- *                 example: "Referral"
- *               status:
- *                 type: string
- *                 enum: [NEW, CONTACTED, QUALIFIED, LOST]
- *                 example: "CONTACTED"
- *               assignedToId:
- *                 type: string
- *                 nullable: true
- *                 example: "7a19fcd5-33b6-49fb-8aab-a2e775600002"
- *               contactId:
- *                 type: string
- *                 nullable: true
- *                 example: "b3d1ce51-6e1e-4fa2-b39f-3a7d1f9a0001"
- *     responses:
- *       200:
- *         description: Lead updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "success"
- *                 message:
- *                   type: string
- *                   example: "Lead updated successfully"
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
- *                     title:
- *                       type: string
- *                       example: "Updated Website Lead"
- *                     description:
- *                       type: string
- *                       example: "Lead is now highly interested after demo"
- *                     source:
- *                       type: string
- *                       example: "Referral"
- *                     status:
- *                       type: string
- *                       example: "CONTACTED"
- *                     tenantId:
- *                       type: string
- *                       example: "uuid-of-tenant"
- *                     contactId:
- *                       type: string
- *                       nullable: true
- *                       example: "b3d1ce51-6e1e-4fa2-b39f-3a7d1f9a0001"
- *                     assignedToId:
- *                       type: string
- *                       nullable: true
- *                       example: "7a19fcd5-33b6-49fb-8aab-a2e775600002"
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-12-05T12:00:00.000Z"
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-12-05T13:00:00.000Z"
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       400:
- *         description: Validation error or invalid ID
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Invalid lead ID"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       403:
- *         description: Forbidden (tenant mismatch or unauthorized)
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Forbidden"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       500:
- *         description: Internal Server Error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Something went wrong"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- */
+  /**
+   * @swagger
+   * /api/v1/leads/{id}:
+   *   patch:
+   *     summary: Update a lead within the tenant
+   *     tags: [Leads]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         example: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               title:
+   *                 type: string
+   *                 example: "Updated Website Lead"
+   *               description:
+   *                 type: string
+   *                 example: "Lead is now highly interested after demo"
+   *               source:
+   *                 type: string
+   *                 example: "Referral"
+   *               status:
+   *                 type: string
+   *                 enum: [NEW, CONTACTED, QUALIFIED, LOST]
+   *                 example: "CONTACTED"
+   *               assignedToId:
+   *                 type: string
+   *                 nullable: true
+   *                 example: "7a19fcd5-33b6-49fb-8aab-a2e775600002"
+   *               contactId:
+   *                 type: string
+   *                 nullable: true
+   *                 example: "b3d1ce51-6e1e-4fa2-b39f-3a7d1f9a0001"
+   *     responses:
+   *       200:
+   *         description: Lead updated successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "success"
+   *                 message:
+   *                   type: string
+   *                   example: "Lead updated successfully"
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     id:
+   *                       type: string
+   *                       example: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
+   *                     title:
+   *                       type: string
+   *                       example: "Updated Website Lead"
+   *                     description:
+   *                       type: string
+   *                       example: "Lead is now highly interested after demo"
+   *                     source:
+   *                       type: string
+   *                       example: "Referral"
+   *                     status:
+   *                       type: string
+   *                       example: "CONTACTED"
+   *                     tenantId:
+   *                       type: string
+   *                       example: "uuid-of-tenant"
+   *                     contactId:
+   *                       type: string
+   *                       nullable: true
+   *                       example: "b3d1ce51-6e1e-4fa2-b39f-3a7d1f9a0001"
+   *                     assignedToId:
+   *                       type: string
+   *                       nullable: true
+   *                       example: "7a19fcd5-33b6-49fb-8aab-a2e775600002"
+   *                     createdAt:
+   *                       type: string
+   *                       format: date-time
+   *                       example: "2025-12-05T12:00:00.000Z"
+   *                     updatedAt:
+   *                       type: string
+   *                       format: date-time
+   *                       example: "2025-12-05T13:00:00.000Z"
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       400:
+   *         description: Validation error or invalid ID
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Invalid lead ID"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       403:
+   *         description: Forbidden (tenant mismatch or unauthorized)
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Forbidden"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       500:
+   *         description: Internal Server Error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Something went wrong"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   */
 
   update = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const tenantId = req.user!.tenantId;
       const leadId = req.params.id;
 
-      const performerId = req.user?.id
+      const performerId = req.user?.id;
 
-      const updatedLead = await this.service.updateLead(tenantId, leadId, req.body, performerId);
+      const updatedLead = await this.service.updateLead(
+        tenantId,
+        leadId,
+        req.body,
+        performerId
+      );
 
-      return res.json(successResponse('Lead updated successfully', updatedLead));
+      return res.json(
+        successResponse('Lead updated successfully', updatedLead)
+      );
     } catch (error) {
       next(error);
     }
@@ -520,138 +531,134 @@ export class LeadsController {
   // --------------------------------------
   // Delete a lead
   // --------------------------------------
-  
-/**
- * @swagger
- * /api/v1/leads/{id}:
- *   delete:
- *     summary: Delete a lead within the tenant
- *     tags: [Leads]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *         example: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
- *     responses:
- *       200:
- *         description: Lead deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "success"
- *                 message:
- *                   type: string
- *                   example: "Lead deleted successfully"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       400:
- *         description: Invalid lead ID or bad request
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Invalid lead ID"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       403:
- *         description: Forbidden (tenant mismatch or unauthorized)
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Forbidden"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       404:
- *         description: Lead not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Lead not found"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       500:
- *         description: Internal Server Error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Something went wrong"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- */
-  
+
+  /**
+   * @swagger
+   * /api/v1/leads/{id}:
+   *   delete:
+   *     summary: Delete a lead within the tenant
+   *     tags: [Leads]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         example: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
+   *     responses:
+   *       200:
+   *         description: Lead deleted successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "success"
+   *                 message:
+   *                   type: string
+   *                   example: "Lead deleted successfully"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       400:
+   *         description: Invalid lead ID or bad request
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Invalid lead ID"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       403:
+   *         description: Forbidden (tenant mismatch or unauthorized)
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Forbidden"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       404:
+   *         description: Lead not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Lead not found"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       500:
+   *         description: Internal Server Error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Something went wrong"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   */
+
   delete = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const tenantId = req.user!.tenantId;
       const leadId = req.params.id;
 
-      const performerId = req.user?.id
+      const performerId = req.user?.id;
 
-      await this.service.deleteLead(
-        tenantId, 
-        leadId, 
-        performerId
-      );
+      await this.service.deleteLead(tenantId, leadId, performerId);
 
       return res.json(successResponse('Lead deleted successfully', {}));
     } catch (error) {
@@ -659,424 +666,414 @@ export class LeadsController {
     }
   };
 
+  // --------------------------------------
+  // Assign a lead to a user
+  // --------------------------------------
 
-
-// --------------------------------------
-// Assign a lead to a user
-// --------------------------------------
-
-/**
- * @swagger
- * /api/v1/leads/{id}/assign:
- *   patch:
- *     summary: Assign a lead to a user within the tenant
- *     tags: [Leads]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *         example: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               assignedToId:
- *                 type: string
- *                 format: uuid
- *             required:
- *               - assignedToId
- *           example:
- *             assignedToId: "81a9fb22-543c-4df1-9f4e-1f8b2e900111"
- *     responses:
- *       200:
- *         description: Lead assigned successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "success"
- *                 message:
- *                   type: string
- *                   example: "Lead assigned successfully"
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     assignedToId:
- *                       type: string
- *                   example:
- *                     id: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
- *                     assignedToId: "81a9fb22-543c-4df1-9f4e-1f8b2e900111"
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       400:
- *         description: Invalid lead ID or invalid assignedToId
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Invalid assignedToId"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       403:
- *         description: Forbidden (tenant mismatch or unauthorized)
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Forbidden"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       404:
- *         description: Lead not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Lead not found"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- *       500:
- *         description: Internal Server Error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Something went wrong"
- *                 data:
- *                   type: object
- *                   example: {}
- *                 errors:
- *                   type: array
- *                   items: {}
- *                   example: []
- */
+  /**
+   * @swagger
+   * /api/v1/leads/{id}/assign:
+   *   patch:
+   *     summary: Assign a lead to a user within the tenant
+   *     tags: [Leads]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         example: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               assignedToId:
+   *                 type: string
+   *                 format: uuid
+   *             required:
+   *               - assignedToId
+   *           example:
+   *             assignedToId: "81a9fb22-543c-4df1-9f4e-1f8b2e900111"
+   *     responses:
+   *       200:
+   *         description: Lead assigned successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "success"
+   *                 message:
+   *                   type: string
+   *                   example: "Lead assigned successfully"
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     id:
+   *                       type: string
+   *                     assignedToId:
+   *                       type: string
+   *                   example:
+   *                     id: "6c2a7db0-fb73-4da3-8c73-f4e9da600001"
+   *                     assignedToId: "81a9fb22-543c-4df1-9f4e-1f8b2e900111"
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       400:
+   *         description: Invalid lead ID or invalid assignedToId
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Invalid assignedToId"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       403:
+   *         description: Forbidden (tenant mismatch or unauthorized)
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Forbidden"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       404:
+   *         description: Lead not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Lead not found"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   *       500:
+   *         description: Internal Server Error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: "error"
+   *                 message:
+   *                   type: string
+   *                   example: "Something went wrong"
+   *                 data:
+   *                   type: object
+   *                   example: {}
+   *                 errors:
+   *                   type: array
+   *                   items: {}
+   *                   example: []
+   */
 
   assignLead = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  try {
-    const tenantId = req.user!.tenantId;
-    const leadId = req.params.id;
-    const performerId = req.user?.id
-    const { assignedToId } = req.body;
+    try {
+      const tenantId = req.user!.tenantId;
+      const leadId = req.params.id;
+      const performerId = req.user?.id;
+      const { assignedToId } = req.body;
 
-    const result = await this.service.assignLead(tenantId, leadId, assignedToId, performerId);
+      const result = await this.service.assignLead(
+        tenantId,
+        leadId,
+        assignedToId,
+        performerId
+      );
 
-    return res.json(successResponse("Lead assigned successfully", result));
-  } catch (error) {
-    next(error);
-  }
-};
-
-
-// --------------------------------------
-// Find leads with search, assignedToId, status, pagination
-// --------------------------------------
-
-/**
- * @swagger
- * /api/v1/leads:
- *   get:
- *     summary: Get all leads with optional filtering and pagination
- *     description: |
- *       Returns all leads for the tenant.  
- *       Supports filtering by status, source, assigned user, and search across title/description.
- *     tags: [Leads]
- *     security:
- *       - bearerAuth: []
- * 
- *     parameters:
- *       - name: search
- *         in: query
- *         description: Search in lead title or description
- *         schema:
- *           type: string
- *           example: website
- * 
- *       - name: status
- *         in: query
- *         description: Filter by lead status (NEW, CONTACTED, QUALIFIED, LOST, etc.)
- *         schema:
- *           type: string
- *           example: NEW
- * 
- *       - name: source
- *         in: query
- *         description: Filter by lead source (LinkedIn, Naukri, etc.)
- *         schema:
- *           type: string
- *           example: LinkedIn
- * 
- *       - name: assignedToId
- *         in: query
- *         description: Filter leads assigned to a specific user
- *         schema:
- *           type: string
- *           format: uuid
- *           example: 743481e0-f6f2-41d5-bd73-773033a1d3c3
- * 
- *       - name: page
- *         in: query
- *         description: Page number for pagination
- *         schema:
- *           type: integer
- *           default: 1
- *           example: 1
- * 
- *       - name: limit
- *         in: query
- *         description: Number of leads per page
- *         schema:
- *           type: integer
- *           default: 20
- *           example: 20
- * 
- *     responses:
- *       200:
- *         description: Leads fetched successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 message:
- *                   type: string
- *                   example: Leads fetched
- *                 data:
- *                   type: object
- *                   properties:
- *                     leads:
- *                       type: array
- *                       items:
- *                         $ref: "#/components/schemas/LeadResponse"
- *                     page:
- *                       type: integer
- *                       example: 1
- *                     limit:
- *                       type: integer
- *                       example: 20
- *                     total:
- *                       type: integer
- *                       example: 9
- *                 errors:
- *                   type: array
- *                   example: []
- * 
- *       403:
- *         description: Forbidden – Unauthorized tenant access
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/responses/Forbidden"
- * 
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/responses/ServerError"
- */
-
-
-
-findAll = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  try {
-    const tenantId = req.user?.tenantId;
-
-    if (!tenantId) {
-      throw new ForbiddenError("You are not authorized");
+      return res.json(successResponse('Lead assigned successfully', result));
+    } catch (error) {
+      next(error);
     }
+  };
 
-    // Safely parse pagination
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 20;
+  // --------------------------------------
+  // Find leads with search, assignedToId, status, pagination
+  // --------------------------------------
 
-    // Build filters and automatically remove empty/undefined values
-    const filters: any = {
-      page,
-      limit,
-      status: req.query.status || undefined,
-      source: req.query.source || undefined,
-      assignedToId: req.query.assignedToId || undefined,
-      search: req.query.search || undefined,
-    };
+  /**
+   * @swagger
+   * /api/v1/leads:
+   *   get:
+   *     summary: Get all leads with optional filtering and pagination
+   *     description: |
+   *       Returns all leads for the tenant.
+   *       Supports filtering by status, source, assigned user, and search across title/description.
+   *     tags: [Leads]
+   *     security:
+   *       - bearerAuth: []
+   *
+   *     parameters:
+   *       - name: search
+   *         in: query
+   *         description: Search in lead title or description
+   *         schema:
+   *           type: string
+   *           example: website
+   *
+   *       - name: status
+   *         in: query
+   *         description: Filter by lead status (NEW, CONTACTED, QUALIFIED, LOST, etc.)
+   *         schema:
+   *           type: string
+   *           example: NEW
+   *
+   *       - name: source
+   *         in: query
+   *         description: Filter by lead source (LinkedIn, Naukri, etc.)
+   *         schema:
+   *           type: string
+   *           example: LinkedIn
+   *
+   *       - name: assignedToId
+   *         in: query
+   *         description: Filter leads assigned to a specific user
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *           example: 743481e0-f6f2-41d5-bd73-773033a1d3c3
+   *
+   *       - name: page
+   *         in: query
+   *         description: Page number for pagination
+   *         schema:
+   *           type: integer
+   *           default: 1
+   *           example: 1
+   *
+   *       - name: limit
+   *         in: query
+   *         description: Number of leads per page
+   *         schema:
+   *           type: integer
+   *           default: 20
+   *           example: 20
+   *
+   *     responses:
+   *       200:
+   *         description: Leads fetched successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: success
+   *                 message:
+   *                   type: string
+   *                   example: Leads fetched
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     leads:
+   *                       type: array
+   *                       items:
+   *                         $ref: "#/components/schemas/LeadResponse"
+   *                     page:
+   *                       type: integer
+   *                       example: 1
+   *                     limit:
+   *                       type: integer
+   *                       example: 20
+   *                     total:
+   *                       type: integer
+   *                       example: 9
+   *                 errors:
+   *                   type: array
+   *                   example: []
+   *
+   *       403:
+   *         description: Forbidden – Unauthorized tenant access
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: "#/components/responses/Forbidden"
+   *
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: "#/components/responses/ServerError"
+   */
 
-    // Remove keys where value === undefined
-    Object.keys(filters).forEach(
-      key => filters[key] === undefined && delete filters[key]
-    );
+  findAll = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      const tenantId = req.user?.tenantId;
 
-    const result = await this.service.getLeads(tenantId, filters);
+      if (!tenantId) {
+        throw new ForbiddenError('You are not authorized');
+      }
 
-    return res.json({
-      status: "success",
-      message: "Leads fetched",
-      data: result,
-    });
+      // Safely parse pagination
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 20;
 
-  } catch (error) {
-    next(error);
-  }
-}
+      // Build filters and automatically remove empty/undefined values
+      const filters: any = {
+        page,
+        limit,
+        status: req.query.status || undefined,
+        source: req.query.source || undefined,
+        assignedToId: req.query.assignedToId || undefined,
+        search: req.query.search || undefined,
+      };
 
+      // Remove keys where value === undefined
+      Object.keys(filters).forEach(
+        (key) => filters[key] === undefined && delete filters[key]
+      );
 
+      const result = await this.service.getLeads(tenantId, filters);
 
+      return res.json({
+        status: 'success',
+        message: 'Leads fetched',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-// -------------------------
-// Convert Lead → Contact + Deal
-// -------------------------
+  // -------------------------
+  // Convert Lead → Contact + Deal
+  // -------------------------
 
+  /**
+   * @swagger
+   * /api/v1/leads/{id}/convert:
+   *   post:
+   *     summary: Convert a lead into a contact and deal
+   *     description: |
+   *       Converts a qualified lead into a Contact and Deal within a transaction-safe flow.
+   *       Updates the lead status to QUALIFIED, creates a deal, associates it with a contact,
+   *       and logs the action in audit logs.
+   *     tags: [Leads]
+   *     security:
+   *       - bearerAuth: []
+   *
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         description: Lead ID to convert
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *           example: bae66ea2-4ef8-4785-a4ae-87bc5495319c
+   *
+   *     responses:
+   *       200:
+   *         description: Lead converted successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: Lead converted successfully
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     leadId:
+   *                       type: string
+   *                       format: uuid
+   *                       example: bae66ea2-4ef8-4785-a4ae-87bc5495319c
+   *                     contactId:
+   *                       type: string
+   *                       format: uuid
+   *                       example: 8855f47a-7c38-437a-9175-015f36f73cd8
+   *                     dealId:
+   *                       type: string
+   *                       format: uuid
+   *                       example: 486c665c-b18a-4c47-882c-b9c3a7948192
+   *
+   *       400:
+   *         description: Lead already converted or invalid request
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: "#/components/responses/BadRequest"
+   *
+   *       404:
+   *         description: Lead not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: "#/components/responses/NotFound"
+   *
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: "#/components/responses/ServerError"
+   */
 
-/**
- * @swagger
- * /api/v1/leads/{id}/convert:
- *   post:
- *     summary: Convert a lead into a contact and deal
- *     description: |
- *       Converts a qualified lead into a Contact and Deal within a transaction-safe flow.
- *       Updates the lead status to QUALIFIED, creates a deal, associates it with a contact,
- *       and logs the action in audit logs.
- *     tags: [Leads]
- *     security:
- *       - bearerAuth: []
- * 
- *     parameters:
- *       - name: id
- *         in: path
- *         description: Lead ID to convert
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *           example: bae66ea2-4ef8-4785-a4ae-87bc5495319c
- * 
- *     responses:
- *       200:
- *         description: Lead converted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Lead converted successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     leadId:
- *                       type: string
- *                       format: uuid
- *                       example: bae66ea2-4ef8-4785-a4ae-87bc5495319c
- *                     contactId:
- *                       type: string
- *                       format: uuid
- *                       example: 8855f47a-7c38-437a-9175-015f36f73cd8
- *                     dealId:
- *                       type: string
- *                       format: uuid
- *                       example: 486c665c-b18a-4c47-882c-b9c3a7948192
- * 
- *       400:
- *         description: Lead already converted or invalid request
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/responses/BadRequest"
- * 
- *       404:
- *         description: Lead not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/responses/NotFound"
- * 
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/responses/ServerError"
- */
+  convertLead = async (req: any, res: any, next: any) => {
+    try {
+      const { id: leadId } = req.params;
+      const tenantId = req.user?.tenantId;
+      const performedById = req.user?.id;
 
+      const result = await this.service.convertLead(
+        tenantId,
+        leadId,
+        performedById
+      );
 
-convertLead = async(req: any, res: any, next: any) => {
-  try {
-    const { id: leadId } = req.params;
-    const tenantId = req.user?.tenantId;
-    const performedById = req.user?.id;
-
-    const result = await this.service.convertLead(
-      tenantId,
-      leadId,
-      performedById
-    );
-
-    return res.status(200).json({
-      message: 'Lead converted successfully',
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-
-
-
+      return res.status(200).json({
+        message: 'Lead converted successfully',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

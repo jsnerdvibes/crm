@@ -5,14 +5,14 @@ export enum LogActions {
   DEACTIVATE = 'DEACTIVATE',
   ASSIGNED = 'ASSIGNED',
   UPDATE_STAGE = 'UPDATE_STAGE',
-  CONVERT = 'CONVERT'
+  CONVERT = 'CONVERT',
 }
 
 export enum LogResources {
-    USER = 'USER',
-    LEAD = 'LEAD',
-    DEAL = 'DEAL',
-    CONTACT = 'CONTACT',
-    COMPANY = 'COMPANY',
-    ACTIVITY = 'ACTIVITY'
+  USER = 'USER',
+  LEAD = 'LEAD',
+  DEAL = 'DEAL',
+  CONTACT = 'CONTACT',
+  COMPANY = 'COMPANY',
+  ACTIVITY = 'ACTIVITY',
 }

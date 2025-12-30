@@ -1,7 +1,7 @@
-import { IAuditRepository } from "./audit.repo.interface";
-import { CreateAuditLogDTO, AuditLogQueryDTO } from "./dto";
-import { AuditLog } from "../../core/db";
-import { NotFoundError } from "../../core/error";
+import { IAuditRepository } from './audit.repo.interface';
+import { CreateAuditLogDTO, AuditLogQueryDTO } from './dto';
+import { AuditLog } from '../../core/db';
+import { NotFoundError } from '../../core/error';
 
 export class AuditService {
   constructor(private repo: IAuditRepository) {}
@@ -46,7 +46,7 @@ export class AuditService {
   // -------------------------------------------------------
   async getLogById(tenantId: string, id: string): Promise<AuditLog> {
     const log = await this.repo.findById(tenantId, id);
-    if (!log) throw new NotFoundError("Audit log not found");
+    if (!log) throw new NotFoundError('Audit log not found');
 
     return log;
   }

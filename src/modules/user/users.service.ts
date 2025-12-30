@@ -44,14 +44,13 @@ export class UsersService {
     const sanitized = this.sanitize(user);
 
     await logAudit(
-    tenantId,
-    performedById,
-    LogActions.CREATE,
-    LogResources.USER,
-    user.id,
-    { title: user.name }
-  );
-
+      tenantId,
+      performedById,
+      LogActions.CREATE,
+      LogResources.USER,
+      user.id,
+      { title: user.name }
+    );
 
     return sanitized;
   }
@@ -63,7 +62,7 @@ export class UsersService {
     tenantId: string,
     userId: string,
     data: UpdateUserDTO,
-    performedById?:string
+    performedById?: string
   ): Promise<UserResponse> {
     const user = await this.repo.findById(tenantId, userId);
     if (!user) throw new NotFoundError('User not found');
@@ -92,17 +91,15 @@ export class UsersService {
     const sanitized = this.sanitize(updatedUser);
 
     await logAudit(
-    tenantId,
-    performedById,
-    LogActions.UPDATE,
-    LogResources.USER,
-    user.id,
-    { title: user.name }
-  );
-
+      tenantId,
+      performedById,
+      LogActions.UPDATE,
+      LogResources.USER,
+      user.id,
+      { title: user.name }
+    );
 
     return sanitized;
-
   }
 
   // -------------------------
@@ -111,7 +108,7 @@ export class UsersService {
   async deactivateUser(
     tenantId: string,
     userId: string,
-    performedById?:string
+    performedById?: string
   ): Promise<UserResponse> {
     const userInfo = await this.repo.findById(tenantId, userId);
     if (!userInfo) throw new NotFoundError('User not found');
@@ -125,25 +122,23 @@ export class UsersService {
     const sanitized = this.sanitize(user);
 
     await logAudit(
-    tenantId,
-    performedById,
-    LogActions.DEACTIVATE,
-    LogResources.USER,
-    user.id,
-    { title: user.name }
-  );
-
+      tenantId,
+      performedById,
+      LogActions.DEACTIVATE,
+      LogResources.USER,
+      user.id,
+      { title: user.name }
+    );
 
     return sanitized;
-
   }
 
   // -------------------------
   // Delete user
   // -------------------------
   async delete(
-    tenantId: string, 
-    userId: string, 
+    tenantId: string,
+    userId: string,
     performedById?: string
   ): Promise<void> {
     const user = await this.repo.findById(tenantId, userId);
@@ -156,15 +151,13 @@ export class UsersService {
     await this.repo.delete(tenantId, userId);
 
     await logAudit(
-    tenantId,
-    performedById,
-    LogActions.DELETE,
-    LogResources.USER,
-    user.id,
-    { title: user.name }
-  );
-    
-    
+      tenantId,
+      performedById,
+      LogActions.DELETE,
+      LogResources.USER,
+      user.id,
+      { title: user.name }
+    );
   }
 
   // -------------------------
@@ -198,5 +191,4 @@ export class UsersService {
       updatedAt: user.updatedAt,
     };
   }
-
 }

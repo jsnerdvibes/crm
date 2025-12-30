@@ -93,23 +93,19 @@ export class ContactsRepository implements IContactsRepository {
     });
   }
 
-
   async createTx(
-  tx: Prisma.TransactionClient,
-  data: {
-    tenantId: string;
-    firstName: string;
-    lastName?: string | null;
-    email?: string | null;
-    phone?: string | null;
-    companyId?: string | null;
+    tx: Prisma.TransactionClient,
+    data: {
+      tenantId: string;
+      firstName: string;
+      lastName?: string | null;
+      email?: string | null;
+      phone?: string | null;
+      companyId?: string | null;
+    }
+  ): Promise<Contact> {
+    return tx.contact.create({
+      data,
+    });
   }
-): Promise<Contact> {
-  return tx.contact.create({
-    data,
-  });
-}
-
-
-
 }

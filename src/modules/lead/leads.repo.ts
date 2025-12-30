@@ -1,6 +1,6 @@
 import { prisma, Lead, Prisma } from '../../core/db';
 import { ILeadsRepository } from './leads.repo.interface';
-import { CreateLeadDTO, UpdateLeadDTO} from './dto';
+import { CreateLeadDTO, UpdateLeadDTO } from './dto';
 import { NotFoundError } from '../../core/error';
 
 export class LeadsRepository implements ILeadsRepository {
@@ -28,7 +28,6 @@ export class LeadsRepository implements ILeadsRepository {
       },
     });
   }
-
 
   // Update a lead
   async update(
@@ -59,90 +58,79 @@ export class LeadsRepository implements ILeadsRepository {
     });
   }
 
-
   async assignLead(
-  tenantId: string,
-  leadId: string,
-  assignedToId: string
-): Promise<Lead> {
-  await prisma.lead.updateMany({
-    where: { id: leadId, tenantId },
-    data: { assignedToId },
-  });
+    tenantId: string,
+    leadId: string,
+    assignedToId: string
+  ): Promise<Lead> {
+    await prisma.lead.updateMany({
+      where: { id: leadId, tenantId },
+      data: { assignedToId },
+    });
 
-  const lead = await this.findById(tenantId, leadId);
-  if (!lead) throw new NotFoundError('Lead not found');
-  return lead;
-}
-
-
-
-
-async getLeads(tenantId: string, filters: any) {
-  const page = filters.page || 1;
-  const limit = filters.limit || 20;
-  const skip = (page - 1) * limit;
-
-  const where: any = { tenantId };
-
-  if (filters.status) where.status = filters.status;
-  if (filters.source) where.source = filters.source;
-  if (filters.assignedToId) where.assignedToId = filters.assignedToId;
-
-  if (filters.search) {
-    where.OR = [
-      { title: { contains: filters.search } },
-      { description: { contains: filters.search } },
-    ];
+    const lead = await this.findById(tenantId, leadId);
+    if (!lead) throw new NotFoundError('Lead not found');
+    return lead;
   }
 
-  const leads = await prisma.lead.findMany({
-    where,
-    skip,
-    take: limit,
-    orderBy: { createdAt: "desc" },
-  });
+  async getLeads(tenantId: string, filters: any) {
+    const page = filters.page || 1;
+    const limit = filters.limit || 20;
+    const skip = (page - 1) * limit;
 
-  const total = await prisma.lead.count({ where });
+    const where: any = { tenantId };
 
-  return { leads, total };
-}
+    if (filters.status) where.status = filters.status;
+    if (filters.source) where.source = filters.source;
+    if (filters.assignedToId) where.assignedToId = filters.assignedToId;
 
+    if (filters.search) {
+      where.OR = [
+        { title: { contains: filters.search } },
+        { description: { contains: filters.search } },
+      ];
+    }
 
-async findByIdWithRelations(
-  tenantId: string,
-  leadId: string
-): Promise<Lead | null> {
-  return prisma.lead.findFirst({
-    where: {
-      id: leadId,
-      tenantId,
-    },
-    include: {
-      contact: true,
-      assignedTo: true,
-    },
-  });
-}
+    const leads = await prisma.lead.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    });
 
+    const total = await prisma.lead.count({ where });
 
+    return { leads, total };
+  }
 
-async updateTx(
-  tx: Prisma.TransactionClient,
-  leadId: string,
-  data: Partial<Lead>
-): Promise<Lead> {
-  const lead = await tx.lead.update({
-    where: {
-      id: leadId,
-    },
-    data,
-  });
+  async findByIdWithRelations(
+    tenantId: string,
+    leadId: string
+  ): Promise<Lead | null> {
+    return prisma.lead.findFirst({
+      where: {
+        id: leadId,
+        tenantId,
+      },
+      include: {
+        contact: true,
+        assignedTo: true,
+      },
+    });
+  }
 
-  return lead;
-}
+  async updateTx(
+    tx: Prisma.TransactionClient,
+    leadId: string,
+    data: Partial<Lead>
+  ): Promise<Lead> {
+    const lead = await tx.lead.update({
+      where: {
+        id: leadId,
+      },
+      data,
+    });
 
-
-
-
+    return lead;
+  }
 }

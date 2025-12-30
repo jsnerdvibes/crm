@@ -12,7 +12,6 @@ export interface ILeadsRepository {
    */
   findById(tenantId: string, leadId: string): Promise<Lead | null>;
 
-
   /**
    * Update an existing lead
    */
@@ -23,34 +22,28 @@ export interface ILeadsRepository {
    */
   delete(tenantId: string, leadId: string): Promise<void>;
 
-
   assignLead(
-  tenantId: string,
-  leadId: string,
-  assignedToId: string
-): Promise<Lead>;
-
+    tenantId: string,
+    leadId: string,
+    assignedToId: string
+  ): Promise<Lead>;
 
   getLeads(
-  tenantId: string,
-  filters: {
-    page?: number;
-    limit?: number;
-    status?: string;
-    source?: string;
-    search?: string;
-    assignedToId?: string;
-  }
-): Promise<{ leads: Lead[]; total: number }>;
-
+    tenantId: string,
+    filters: {
+      page?: number;
+      limit?: number;
+      status?: string;
+      source?: string;
+      search?: string;
+      assignedToId?: string;
+    }
+  ): Promise<{ leads: Lead[]; total: number }>;
 
   /**
    * Find lead by ID with relations (used for conversion)
    */
-  findByIdWithRelations(
-    tenantId: string,
-    leadId: string
-  ): Promise<Lead | null>;
+  findByIdWithRelations(tenantId: string, leadId: string): Promise<Lead | null>;
 
   /**
    * Update lead inside a transaction
@@ -60,7 +53,4 @@ export interface ILeadsRepository {
     leadId: string,
     data: Partial<Lead>
   ): Promise<Lead>;
-
-
-
 }

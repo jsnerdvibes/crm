@@ -22,27 +22,20 @@ apiRoutes.use('/users', userRoutes);
 // Lead Routes
 apiRoutes.use('/leads', leadRoutes);
 
-
 // Contact Routes
 apiRoutes.use('/contacts', contactRoutes);
-
 
 // Company Routes
 apiRoutes.use('/companies', companyRoutes);
 
-
 // Deal Routes
 apiRoutes.use('/deals', dealRoutes);
-
 
 // Activity Routes
 apiRoutes.use('/activities', activityRoutes);
 
 // Audit Routes
 apiRoutes.use('/audit-logs', auditRoutes);
-
-
-
 
 // Test Routes
 

@@ -1,8 +1,8 @@
-import { Response, NextFunction } from "express";
-import { AuditService } from "./audit.service";
-import { successResponse } from "../../utils/response";
-import { AuthRequest } from "../../types/authRequest";
-import { AuditLogQuerySchema } from "./dto";
+import { Response, NextFunction } from 'express';
+import { AuditService } from './audit.service';
+import { successResponse } from '../../utils/response';
+import { AuthRequest } from '../../types/authRequest';
+import { AuditLogQuerySchema } from './dto';
 
 export class AuditController {
   constructor(private service: AuditService) {}
@@ -71,9 +71,7 @@ export class AuditController {
 
       const logs = await this.service.getLogs(tenantId, query);
 
-      return res.json(
-        successResponse("Audit logs fetched successfully", logs)
-      );
+      return res.json(successResponse('Audit logs fetched successfully', logs));
     } catch (error) {
       next(error);
     }
@@ -115,9 +113,7 @@ export class AuditController {
 
       const log = await this.service.getLogById(tenantId, logId);
 
-      return res.json(
-        successResponse("Audit log retrieved successfully", log)
-      );
+      return res.json(successResponse('Audit log retrieved successfully', log));
     } catch (error) {
       next(error);
     }

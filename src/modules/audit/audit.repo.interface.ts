@@ -1,5 +1,5 @@
-import { AuditLog } from "../../core/db";
-import { CreateAuditLogDTO, AuditLogQueryDTO } from "./dto";
+import { AuditLog } from '../../core/db';
+import { CreateAuditLogDTO, AuditLogQueryDTO } from './dto';
 
 export interface IAuditRepository {
   /**

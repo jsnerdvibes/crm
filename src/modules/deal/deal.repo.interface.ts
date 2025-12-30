@@ -32,11 +32,7 @@ export interface IDealsRepository {
 
   delete(tenantId: string, dealId: string): Promise<void>;
 
-  assign(
-    tenantId: string,
-    dealId: string,
-    assignedToId: string
-  ): Promise<Deal>;
+  assign(tenantId: string, dealId: string, assignedToId: string): Promise<Deal>;
 
   updateStage(
     tenantId: string,
@@ -59,8 +55,7 @@ export interface IDealsRepository {
     }
   ): Promise<{ deals: Deal[]; total: number }>;
 
-
-    /**
+  /**
    * Create deal inside a transaction (used for lead conversion)
    */
   createTx(
@@ -75,7 +70,4 @@ export interface IDealsRepository {
       assignedToId?: string | null;
     }
   ): Promise<Deal>;
-
-
-
 }

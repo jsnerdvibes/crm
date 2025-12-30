@@ -8,10 +8,9 @@ export const leadsRepository = new LeadsRepository();
 const contactsRepo = new ContactsRepository();
 const dealsRepo = new DealsRepository();
 
-
 export const leadsService = new LeadsService(
-    leadsRepository,
-    contactsRepo,
-    dealsRepo
+  leadsRepository,
+  contactsRepo,
+  dealsRepo
 );
 export const leadsController = new LeadsController(leadsService);

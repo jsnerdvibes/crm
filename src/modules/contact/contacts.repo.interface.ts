@@ -50,8 +50,7 @@ export interface IContactsRepository {
    */
   delete(tenantId: string, contactId: string): Promise<void>;
 
-
-    /**
+  /**
    * Create contact inside a transaction (used for lead conversion)
    */
   createTx(
@@ -65,6 +64,4 @@ export interface IContactsRepository {
       companyId?: string | null;
     }
   ): Promise<Contact>;
-
-
 }

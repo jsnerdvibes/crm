@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 /**
  * Internal Create Audit Log DTO
@@ -8,15 +8,14 @@ export const CreateAuditLogSchema = z.object({
   tenantId: z.string().uuid(),
   userId: z.string().uuid().nullable().optional(),
 
-  action: z.string().min(1, { message: "Action is required" }),
-  resource: z.string().min(1, { message: "Resource is required" }),
-  resourceId: z.string().uuid({ message: "Resource ID must be a valid UUID" }),
+  action: z.string().min(1, { message: 'Action is required' }),
+  resource: z.string().min(1, { message: 'Resource is required' }),
+  resourceId: z.string().uuid({ message: 'Resource ID must be a valid UUID' }),
 
   meta: z.record(z.string(), z.any()).optional(),
 });
 
 export type CreateAuditLogDTO = z.infer<typeof CreateAuditLogSchema>;
-
 
 /**
  * Query Filter DTO — useful for admin/audit logs filtering.
@@ -35,7 +34,6 @@ export const AuditLogQuerySchema = z.object({
 });
 
 export type AuditLogQueryDTO = z.infer<typeof AuditLogQuerySchema>;
-
 
 /**
  * Audit Log Response Types
