@@ -1,10 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodSchema, ZodError } from 'zod';
 import { UnprocessableEntityError } from '../core/error';
+import { sanitizeObject } from '../utils/sanitize';
 
 export const validate =
   (schema: ZodSchema<any>) =>
   (req: Request, res: Response, next: NextFunction) => {
+
+    req.body = sanitizeObject(req.body);
+
     const result = schema.safeParse(req.body);
 
     if (!result.success) {
@@ -16,6 +20,6 @@ export const validate =
       return next(new UnprocessableEntityError('Validation failed', errors));
     }
 
-    req.body = result.data; // sanitized
+    req.body = result.data;
     next();
   };
