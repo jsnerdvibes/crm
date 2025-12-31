@@ -7,6 +7,7 @@ import companyRoutes from '../modules/company/company.routes';
 import contactRoutes from '../modules/contact/contacts.routes';
 import activityRoutes from '../modules/activity/activity.routes';
 import auditRoutes from '../modules/audit/audit.routes';
+import dashboardRoutes from '../modules/dashboard/dashboard.routes';
 import { AuthRequest } from '../types/authRequest';
 import { authenticate } from '../middlewares/auth';
 import { requiresAdmin } from '../middlewares/rbac';
@@ -36,6 +37,13 @@ apiRoutes.use('/activities', activityRoutes);
 
 // Audit Routes
 apiRoutes.use('/audit-logs', auditRoutes);
+
+
+// Dashboard Routes
+
+apiRoutes.use("/dashboard", dashboardRoutes);
+
+
 
 // Test Routes
 
