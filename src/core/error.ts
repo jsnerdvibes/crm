@@ -46,3 +46,10 @@ export class UnprocessableEntityError extends AppError {
     this.errors = errors;
   }
 }
+
+
+export class ConflictError extends AppError {
+  constructor(message = 'Conflict') {
+    super(message, 409);
+  }
+}
