@@ -4,6 +4,7 @@ import { errorHandler } from './middlewares/errorHandler';
 import { setupSwagger } from './core/swagger';
 import { apiRoutes } from './routes/api.routes';
 import cors from 'cors';
+import { startJobs } from './jobs/jobRunner';
 
 export const app = express();
 
@@ -15,6 +16,9 @@ app.use(requestLogger);
 setupSwagger(app);
 
 app.use('/api/v1', apiRoutes);
+
+
+// startJobs();
 
 // --- Health Route ---
 app.get('/', (req, res) => {
