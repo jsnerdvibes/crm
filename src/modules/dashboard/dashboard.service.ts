@@ -1,4 +1,4 @@
-import { DashboardRepo } from "./dashboard.repo.interface";
+import { DashboardRepo } from './dashboard.repo.interface';
 
 export class DashboardService {
   constructor(private readonly repo: DashboardRepo) {}

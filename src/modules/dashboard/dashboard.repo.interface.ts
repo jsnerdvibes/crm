@@ -1,7 +1,7 @@
 export interface DashboardRepo {
-  getPipelineSummary(tenantId: string): Promise<
-    { stage: string; count: number }[]
-  >;
+  getPipelineSummary(
+    tenantId: string
+  ): Promise<{ stage: string; count: number }[]>;
 
   getTotals(tenantId: string): Promise<{
     leads: number;
@@ -10,7 +10,7 @@ export interface DashboardRepo {
     companies: number;
   }>;
 
-  getActivityStats(tenantId: string): Promise<
-    { type: string; count: number }[]
-  >;
+  getActivityStats(
+    tenantId: string
+  ): Promise<{ type: string; count: number }[]>;
 }

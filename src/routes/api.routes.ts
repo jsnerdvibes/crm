@@ -38,12 +38,9 @@ apiRoutes.use('/activities', activityRoutes);
 // Audit Routes
 apiRoutes.use('/audit-logs', auditRoutes);
 
-
 // Dashboard Routes
 
-apiRoutes.use("/dashboard", dashboardRoutes);
-
-
+apiRoutes.use('/dashboard', dashboardRoutes);
 
 // Test Routes
 

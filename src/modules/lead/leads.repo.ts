@@ -1,7 +1,8 @@
-import { prisma, Lead, Prisma } from '../../core/db';
+import { prisma, Lead, Prisma, LeadStatus } from '../../core/db';
 import { ILeadsRepository } from './leads.repo.interface';
 import { CreateLeadDTO, UpdateLeadDTO } from './dto';
 import { NotFoundError } from '../../core/error';
+import { buildSearchOR } from '../../utils/search';
 
 export class LeadsRepository implements ILeadsRepository {
   // Create a new lead
@@ -80,16 +81,17 @@ export class LeadsRepository implements ILeadsRepository {
 
     const where: any = { tenantId };
 
-    if (filters.status) where.status = filters.status;
+    if (filters.status && Object.values(LeadStatus).includes(filters.status)) {
+      where.status = filters.status;
+    }
+
     if (filters.source) where.source = filters.source;
     if (filters.assignedToId) where.assignedToId = filters.assignedToId;
 
-    if (filters.search) {
-      where.OR = [
-        { title: { contains: filters.search } },
-        { description: { contains: filters.search } },
-      ];
-    }
+    Object.assign(
+      where,
+      buildSearchOR(filters.search, ['title', 'description'])
+    );
 
     const leads = await prisma.lead.findMany({
       where,

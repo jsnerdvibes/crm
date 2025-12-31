@@ -127,6 +127,7 @@ model Contact {
 
   @@index([tenantId])
   @@index([email])
+  @@index([firstName])
   @@map("contacts")
 }
 
@@ -150,6 +151,8 @@ model Lead {
 
   @@index([tenantId])
   @@index([status])
+  @@index([assignedToId])
+  @@index([title])
   @@map("leads")
 }
 
@@ -173,6 +176,8 @@ model Deal {
 
   @@index([tenantId])
   @@index([stage])
+  @@index([assignedToId])
+  @@index([title])
   @@map("deals")
 }
 
@@ -195,6 +200,8 @@ model Activity {
   createdAt DateTime  @default(now())
 
   @@index([tenantId])
+  @@index([type])
+  @@index([createdAt])
   @@index([targetType, targetId])
   @@map("activities")
 }

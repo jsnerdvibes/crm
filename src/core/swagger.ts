@@ -3,14 +3,13 @@ import swaggerUi from 'swagger-ui-express';
 import { Express } from 'express';
 import { config } from '../config';
 
-
 const options: swaggerJsdoc.Options = {
   definition: {
-    openapi: "3.0.0",
+    openapi: '3.0.0',
     info: {
-      title: "CRM API",
-      version: "1.0.0",
-      description: "API Documentation for CRM",
+      title: 'CRM API',
+      version: '1.0.0',
+      description: 'API Documentation for CRM',
     },
 
     servers: [
@@ -28,26 +27,26 @@ const options: swaggerJsdoc.Options = {
     components: {
       securitySchemes: {
         bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
         },
       },
 
       responses: {
         Forbidden: {
-          description: "Forbidden – user not authorized",
+          description: 'Forbidden – user not authorized',
           content: {
-            "application/json": {
+            'application/json': {
               schema: {
-                type: "object",
+                type: 'object',
                 properties: {
                   message: {
-                    type: "string",
-                    example: "Unauthorized",
+                    type: 'string',
+                    example: 'Unauthorized',
                   },
                   data: {
-                    type: "object",
+                    type: 'object',
                     example: {},
                   },
                 },
@@ -57,18 +56,18 @@ const options: swaggerJsdoc.Options = {
         },
 
         ServerError: {
-          description: "Internal server error",
+          description: 'Internal server error',
           content: {
-            "application/json": {
+            'application/json': {
               schema: {
-                type: "object",
+                type: 'object',
                 properties: {
                   message: {
-                    type: "string",
-                    example: "Something went wrong",
+                    type: 'string',
+                    example: 'Something went wrong',
                   },
                   data: {
-                    type: "object",
+                    type: 'object',
                     example: {},
                   },
                 },
@@ -80,9 +79,8 @@ const options: swaggerJsdoc.Options = {
     },
   },
 
-  apis: ["./src/modules/**/*.ts"],
+  apis: ['./src/modules/**/*.ts'],
 };
-
 
 const specs = swaggerJsdoc(options);
 

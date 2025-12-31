@@ -1,19 +1,20 @@
-import { prisma } from "../../core/db";
-import { DashboardRepo } from "./dashboard.repo.interface";
+import { prisma } from '../../core/db';
+import { DashboardRepo } from './dashboard.repo.interface';
 
 export class DashboardRepository implements DashboardRepo {
-
   async getPipelineSummary(tenantId: string) {
-    return prisma.deal.groupBy({
-      by: ["stage"],
-      where: { tenantId },
-      _count: { stage: true },
-    }).then(result =>
-      result.map(r => ({
-        stage: r.stage,
-        count: r._count.stage,
-      }))
-    );
+    return prisma.deal
+      .groupBy({
+        by: ['stage'],
+        where: { tenantId },
+        _count: { stage: true },
+      })
+      .then((result) =>
+        result.map((r) => ({
+          stage: r.stage,
+          count: r._count.stage,
+        }))
+      );
   }
 
   async getTotals(tenantId: string) {
@@ -28,15 +29,17 @@ export class DashboardRepository implements DashboardRepo {
   }
 
   async getActivityStats(tenantId: string) {
-    return prisma.activity.groupBy({
-      by: ["type"],
-      where: { tenantId },
-      _count: { type: true },
-    }).then(result =>
-      result.map(r => ({
-        type: r.type,
-        count: r._count.type,
-      }))
-    );
+    return prisma.activity
+      .groupBy({
+        by: ['type'],
+        where: { tenantId },
+        _count: { type: true },
+      })
+      .then((result) =>
+        result.map((r) => ({
+          type: r.type,
+          count: r._count.type,
+        }))
+      );
   }
 }

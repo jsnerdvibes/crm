@@ -1,6 +1,7 @@
 import { prisma, Deal, DealStage, Prisma } from '../../core/db';
 import { IDealsRepository } from './deal.repo.interface';
 import { NotFoundError } from '../../core/error';
+import { buildSearchOR } from '../../utils/search';
 
 export class DealsRepository implements IDealsRepository {
   async create(tenantId: string, data: any): Promise<Deal> {
@@ -81,29 +82,37 @@ export class DealsRepository implements IDealsRepository {
   }
 
   async getDeals(tenantId: string, filters: any) {
-    const page = filters.page || 1;
-    const limit = filters.limit || 20;
+    const page = Math.max(1, Number(filters.page) || 1);
+    const limit = Math.max(1, Number(filters.limit) || 20);
     const skip = (page - 1) * limit;
 
     const where: any = { tenantId };
 
-    if (filters.stage) where.stage = filters.stage;
-    if (filters.companyId) where.companyId = filters.companyId;
-    if (filters.assignedToId) where.assignedToId = filters.assignedToId;
-    if (filters.search) {
-      where.OR = [{ title: { contains: filters.search, mode: 'insensitive' } }];
+    if (
+      filters.stage &&
+      Object.values(DealStage).includes(filters.stage as DealStage)
+    ) {
+      where.stage = filters.stage;
     }
 
-    const deals = await prisma.deal.findMany({
-      where,
-      skip,
-      take: limit,
-      orderBy: { createdAt: 'desc' },
-    });
+    if (filters.companyId) where.companyId = filters.companyId;
+    if (filters.assignedToId) where.assignedToId = filters.assignedToId;
 
-    const total = await prisma.deal.count({ where });
+    if (filters.search) {
+      Object.assign(where, buildSearchOR(filters.search, ['title']));
+    }
 
-    return { deals, total };
+    const [deals, total] = await Promise.all([
+      prisma.deal.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.deal.count({ where }),
+    ]);
+
+    return { deals, total, page, limit };
   }
 
   async createTx(
