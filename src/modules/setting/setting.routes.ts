@@ -6,7 +6,7 @@ import { authenticate } from '../../middlewares/auth';
 
 const router = Router();
 
-router.use(authenticate)
+router.use(authenticate);
 
 router.get('/', settingController.getAll);
 router.get('/:key', settingController.getByKey);

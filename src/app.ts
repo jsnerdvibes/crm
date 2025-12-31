@@ -17,7 +17,6 @@ setupSwagger(app);
 
 app.use('/api/v1', apiRoutes);
 
-
 // startJobs();
 
 // --- Health Route ---
