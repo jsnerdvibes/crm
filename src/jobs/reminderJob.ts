@@ -1,14 +1,15 @@
 // src/jobs/reminderJob.ts
 import { prisma } from '../core/db';
+import { logger } from '../core/logger';
 
 // Placeholder email function
 function sendEmail(to: string, subject: string, body: string) {
-  console.log(`Sending email to ${to} - Subject: ${subject} - Body: ${body}`);
+  logger.info(`Sending email to ${to} - Subject: ${subject} - Body: ${body}`);
 }
 
 // Reminder job: runs periodically to find due activities
 export async function reminderJob() {
-  console.log('[ReminderJob] Running reminder job...');
+  logger.info('[ReminderJob] Running reminder job...');
 
   const now = new Date();
 
@@ -27,5 +28,5 @@ export async function reminderJob() {
     sendEmail(email, subject, body);
   });
 
-  console.log(`[ReminderJob] Found ${dueActivities.length} due activities.`);
+  logger.info(`[ReminderJob] Found ${dueActivities.length} due activities.`);
 }

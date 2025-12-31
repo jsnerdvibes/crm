@@ -8,6 +8,7 @@ import {
   UnauthorizedError,
   ForbiddenError,
 } from '../core/error';
+import { logger } from '../core/logger';
 
 const app = express();
 app.use(express.json());
@@ -44,5 +45,5 @@ app.use(errorHandler);
 // Start server for testing
 const PORT = 4001;
 app.listen(PORT, () => {
-  console.log(`Test server running on http://localhost:${PORT}`);
+  logger.error(`Test server running on http://localhost:${PORT}`);
 });
