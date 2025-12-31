@@ -25,58 +25,162 @@ const options: swaggerJsdoc.Options = {
     ],
 
     components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
-      },
+  securitySchemes: {
+    bearerAuth: {
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+    },
+  },
 
-      responses: {
-        Forbidden: {
-          description: 'Forbidden – user not authorized',
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Unauthorized',
-                  },
-                  data: {
-                    type: 'object',
-                    example: {},
-                  },
-                },
+  responses: {
+    Unauthorized: {
+      description: 'Unauthorized – invalid or missing token',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'string',
+                example: 'error',
               },
-            },
-          },
-        },
-
-        ServerError: {
-          description: 'Internal server error',
-          content: {
-            'application/json': {
-              schema: {
+              message: {
+                type: 'string',
+                example: 'Unauthorized',
+              },
+              data: {
                 type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Something went wrong',
-                  },
-                  data: {
-                    type: 'object',
-                    example: {},
-                  },
-                },
+                example: {},
+              },
+              errors: {
+                type: 'array',
+                items: {},
               },
             },
           },
         },
       },
     },
+
+    Forbidden: {
+      description: 'Forbidden – user not authorized',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'string',
+                example: 'error',
+              },
+              message: {
+                type: 'string',
+                example: 'Forbidden',
+              },
+              data: {
+                type: 'object',
+                example: {},
+              },
+              errors: {
+                type: 'array',
+                items: {},
+              },
+            },
+          },
+        },
+      },
+    },
+
+    NotFound: {
+      description: 'Resource not found',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'string',
+                example: 'error',
+              },
+              message: {
+                type: 'string',
+                example: 'Resource not found',
+              },
+              data: {
+                type: 'object',
+                example: {},
+              },
+              errors: {
+                type: 'array',
+                items: {},
+              },
+            },
+          },
+        },
+      },
+    },
+
+    BadRequest: {
+      description: 'Bad request',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'string',
+                example: 'error',
+              },
+              message: {
+                type: 'string',
+                example: 'Bad request',
+              },
+              data: {
+                type: 'object',
+                example: {},
+              },
+              errors: {
+                type: 'array',
+                items: {},
+              },
+            },
+          },
+        },
+      },
+    },
+
+    ServerError: {
+      description: 'Internal server error',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'string',
+                example: 'error',
+              },
+              message: {
+                type: 'string',
+                example: 'Something went wrong',
+              },
+              data: {
+                type: 'object',
+                example: {},
+              },
+              errors: {
+                type: 'array',
+                items: {},
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+},
+
   },
 
   apis: ['./src/modules/**/*.ts'],
