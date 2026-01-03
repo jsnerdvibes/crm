@@ -1,7 +1,7 @@
 // src/core/tenantScope.ts
 export interface PrismaQuery {
-  where?: Record<string, any>;
-  [key: string]: any;
+  where?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 /**

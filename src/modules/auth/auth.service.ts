@@ -7,6 +7,7 @@ import { config } from '../../config';
 import jwt from 'jsonwebtoken';
 import { comparePassword } from '../../utils/hash';
 import { logger } from '../../core/logger';
+import { Prisma } from '../../core/db';
 export class AuthService {
   constructor(private repo: IAuthRepository) {}
 
@@ -17,11 +18,19 @@ export class AuthService {
     let tenant;
     try {
       tenant = await this.repo.createTenant(data.tenantName, slug);
-    } catch (error: any) {
-      if (error.code === 'P2002') {
+    } catch (error: unknown) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
         throw new BadRequestError('Tenant with this name already exists');
       }
-      throw error;
+
+      if (error instanceof Error) {
+        throw error;
+      }
+
+      throw new Error('Unknown database error');
     }
 
     const passwordHash = await bcrypt.hash(

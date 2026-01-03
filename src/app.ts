@@ -5,19 +5,19 @@ import { setupSwagger } from './core/swagger';
 import { apiRoutes } from './routes/api.routes';
 import cors from 'cors';
 import helmet from 'helmet';
-import { startJobs } from './jobs/jobRunner';
+// import { startJobs } from './jobs/jobRunner';
 import { apiLimiter } from './middlewares/rateLimiter';
 
 export const app = express();
 
-
 app.use(helmet());
-app.use(cors({
-  origin: ['http://localhost:3001','https://test-saas-crm.lovable.app'],
-  methods: ['GET','POST','PUT','PATCH','DELETE'],
-  credentials: true,
-}));
-
+app.use(
+  cors({
+    origin: ['http://localhost:3001', 'https://test-saas-crm.lovable.app'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(requestLogger);

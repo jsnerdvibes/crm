@@ -1,18 +1,18 @@
+import { ZodSchema, ZodTypeAny, ZodError } from 'zod';
 import { Request, Response, NextFunction } from 'express';
-import { ZodSchema, ZodError } from 'zod';
 import { UnprocessableEntityError } from '../core/error';
 import { sanitizeObject } from '../utils/sanitize';
 
 export const validate =
-  (schema: ZodSchema<any>) =>
-  (req: Request, res: Response, next: NextFunction) => {
-
+  <T extends ZodTypeAny>(schema: ZodSchema<T['_output']>) =>
+  (req: Request, _res: Response, next: NextFunction) => {
+    // sanitize request
     req.body = sanitizeObject(req.body);
 
     const result = schema.safeParse(req.body);
 
     if (!result.success) {
-      const zodError = result.error as ZodError; // remove <any>, ZodError already generic
+      const zodError = result.error as ZodError;
       const errors = zodError.issues.map((issue) => ({
         field: issue.path.join('.'),
         message: issue.message,
@@ -20,6 +20,8 @@ export const validate =
       return next(new UnprocessableEntityError('Validation failed', errors));
     }
 
-    req.body = result.data;
+    // sanitize the validated data
+    req.body = sanitizeObject(result.data);
+
     next();
   };

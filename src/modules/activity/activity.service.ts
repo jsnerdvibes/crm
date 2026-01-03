@@ -4,6 +4,8 @@ import { Activity } from '../../core/db';
 import { BadRequestError, NotFoundError } from '../../core/error';
 import { logAudit } from '../../utils/audit.log';
 import { LogActions, LogResources } from '../../types/logActions';
+import { logger } from '../../core/logger';
+import { ActivityFilters } from './types';
 
 export class ActivitiesService {
   constructor(private repo: IActivitiesRepository) {}
@@ -33,6 +35,7 @@ export class ActivitiesService {
 
       return sanitized;
     } catch (error) {
+      logger.error(error);
       throw new BadRequestError(
         'Failed to create activity. Please verify input data.'
       );
@@ -108,7 +111,7 @@ export class ActivitiesService {
   // -------------------------
   // Get activities timeline (polymorphic)
   // -------------------------
-  async getActivities(tenantId: string, filters: any) {
+  async getActivities(tenantId: string, filters: ActivityFilters) {
     const page = filters.page || 1;
     const limit = filters.limit || 20;
 

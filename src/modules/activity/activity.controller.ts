@@ -3,6 +3,8 @@ import { ActivitiesService } from './activity.service';
 import { successResponse } from '../../utils/response';
 import { AuthRequest } from '../../types/authRequest';
 import { ForbiddenError } from '../../core/error';
+import { ActivityFilters, isTargetType } from './types';
+import { getQueryBoolean, getQueryString } from '../../utils/query';
 
 export class ActivitiesController {
   constructor(private service: ActivitiesService) {}
@@ -859,22 +861,17 @@ export class ActivitiesController {
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 20;
 
-      // Build flexible filters
-      const filters: any = {
+      const rawTargetType = getQueryString(req.query.targetType);
+
+      const filters: ActivityFilters = {
         page,
         limit,
-        targetType: req.query.targetType || undefined,
-        targetId: req.query.targetId || undefined,
-        completed:
-          req.query.completed === undefined
-            ? undefined
-            : req.query.completed === 'true',
-      };
 
-      // Remove undefined keys
-      Object.keys(filters).forEach(
-        (key) => filters[key] === undefined && delete filters[key]
-      );
+        targetType: isTargetType(rawTargetType) ? rawTargetType : undefined,
+
+        targetId: getQueryString(req.query.targetId),
+        completed: getQueryBoolean(req.query.completed),
+      };
 
       const result = await this.service.getActivities(tenantId, filters);
 

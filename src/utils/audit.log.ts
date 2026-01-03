@@ -13,7 +13,7 @@ export const logAudit = async (
     | 'CONVERT',
   resource: string,
   resourceId: string,
-  meta?: Record<string, any>
+  meta?: Record<string, unknown>
 ) => {
   try {
     await auditService.logAction({

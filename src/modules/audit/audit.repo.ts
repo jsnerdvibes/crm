@@ -1,4 +1,4 @@
-import { prisma, AuditLog } from '../../core/db';
+import { prisma, AuditLog, Prisma } from '../../core/db';
 import { IAuditRepository } from './audit.repo.interface';
 import { CreateAuditLogDTO, AuditLogQueryDTO } from './dto';
 
@@ -30,7 +30,7 @@ export class AuditRepository implements IAuditRepository {
     const limit = filters.limit || 20;
     const skip = (page - 1) * limit;
 
-    const where: any = { tenantId };
+    const where: Prisma.AuditLogWhereInput = { tenantId };
 
     if (filters.resource) where.resource = filters.resource;
     if (filters.resourceId) where.resourceId = filters.resourceId;

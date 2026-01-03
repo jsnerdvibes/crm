@@ -4,10 +4,11 @@ import { config } from '../config';
 import { prisma } from '../core/db';
 import { UnauthorizedError } from '../core/error';
 import { AuthRequest } from '../types/authRequest';
+import { logger } from '../core/logger';
 
 export const authenticate = async (
   req: AuthRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   try {
@@ -41,6 +42,7 @@ export const authenticate = async (
 
     next();
   } catch (error) {
+    logger.error(error);
     throw new UnauthorizedError('Invalid User');
   }
 };

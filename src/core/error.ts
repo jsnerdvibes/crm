@@ -1,16 +1,20 @@
-export class AppError extends Error {
-  public statusCode: number;
-  public isOperational: boolean;
+import { ValidationErrorItem } from '../types/errorType';
 
-  constructor(message: string, statusCode = 500, isOperational = true) {
+export class AppError extends Error {
+  public readonly statusCode: number;
+  public readonly errors?: ValidationErrorItem[];
+
+  constructor(
+    message: string,
+    statusCode: number,
+    errors?: ValidationErrorItem[]
+  ) {
     super(message);
     this.statusCode = statusCode;
-    this.isOperational = isOperational;
+    this.errors = errors;
 
-    // Maintains proper stack trace
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
+    Object.setPrototypeOf(this, new.target.prototype);
+    Error.captureStackTrace(this);
   }
 }
 
@@ -39,9 +43,12 @@ export class ForbiddenError extends AppError {
 }
 
 export class UnprocessableEntityError extends AppError {
-  public errors: any[];
+  public errors: ValidationErrorItem[];
 
-  constructor(message = 'Unprocessable Entity', errors: any[] = []) {
+  constructor(
+    message = 'Unprocessable Entity',
+    errors: ValidationErrorItem[] = []
+  ) {
     super(message, 422);
     this.errors = errors;
   }

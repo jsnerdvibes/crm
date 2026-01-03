@@ -4,6 +4,8 @@ import { Deal, DealStage } from '../../core/db';
 import { BadRequestError, NotFoundError } from '../../core/error';
 import { logAudit } from '../../utils/audit.log';
 import { LogActions, LogResources } from '../../types/logActions';
+import { logger } from '../../core/logger';
+import { DealFilters } from './types';
 
 export class DealsService {
   constructor(private repo: IDealsRepository) {}
@@ -33,6 +35,7 @@ export class DealsService {
 
       return sanitized;
     } catch (error) {
+      logger.error(error);
       throw new BadRequestError(
         'Failed to create deal. Please check your input data.'
       );
@@ -163,7 +166,7 @@ export class DealsService {
   // -------------------------------------
   // List deals with filters & pagination
   // -------------------------------------
-  async getDeals(tenantId: string, filters: any) {
+  async getDeals(tenantId: string, filters: DealFilters) {
     const page = filters.page || 1;
     const limit = filters.limit || 20;
 

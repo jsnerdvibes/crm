@@ -1,7 +1,8 @@
-import { prisma, Activity } from '../../core/db';
+import { prisma, Activity, Prisma } from '../../core/db';
 import { IActivitiesRepository } from './activity.repo.interface';
 import { CreateActivityDTO, UpdateActivityDTO } from './dto';
 import { NotFoundError } from '../../core/error';
+import { ActivityFilters } from './types';
 
 export class ActivitiesRepository implements IActivitiesRepository {
   /**
@@ -82,12 +83,12 @@ export class ActivitiesRepository implements IActivitiesRepository {
   /**
    * Get activities timeline (polymorphic)
    */
-  async getActivities(tenantId: string, filters: any) {
+  async getActivities(tenantId: string, filters: ActivityFilters) {
     const page = filters.page || 1;
     const limit = filters.limit || 20;
     const skip = (page - 1) * limit;
 
-    const where: any = { tenantId };
+    const where: Prisma.ActivityWhereInput = { tenantId };
 
     if (filters.targetType) where.targetType = filters.targetType;
     if (filters.targetId) where.targetId = filters.targetId;

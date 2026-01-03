@@ -66,3 +66,19 @@ export interface LeadListResponse {
   limit: number;
   total: number;
 }
+
+export interface LeadFilters {
+  page: number;
+  limit: number;
+  status?: LeadStatus;
+  source?: string;
+  assignedToId?: string;
+  search?: string;
+}
+
+export function isLeadStatus(value: unknown): value is LeadStatus {
+  return (
+    typeof value === 'string' &&
+    Object.values(LeadStatus).includes(value as LeadStatus)
+  );
+}

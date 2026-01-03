@@ -2,7 +2,6 @@ import { ICompanyRepository } from './company.repo.interface';
 import { CreateCompanyDTO, UpdateCompanyDTO, CompanyResponse } from './dto';
 import { Company } from '../../core/db';
 import { BadRequestError, NotFoundError } from '../../core/error';
-import { logger } from '../../core/logger';
 import { logAudit } from '../../utils/audit.log';
 import { LogActions, LogResources } from '../../types/logActions';
 

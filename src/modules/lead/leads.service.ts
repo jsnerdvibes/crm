@@ -1,11 +1,12 @@
 import { ILeadsRepository } from './leads.repo.interface';
-import { CreateLeadDTO, UpdateLeadDTO, LeadResponse } from './dto';
+import { CreateLeadDTO, UpdateLeadDTO, LeadResponse, LeadFilters } from './dto';
 import { DealStage, Lead, LeadStatus, prisma } from '../../core/db';
 import { BadRequestError, NotFoundError } from '../../core/error';
 import { logAudit } from '../../utils/audit.log';
 import { LogActions, LogResources } from '../../types/logActions';
 import { IContactsRepository } from '../contact/contacts.repo.interface';
 import { IDealsRepository } from '../deal/deal.repo.interface';
+import { logger } from '../../core/logger';
 
 export class LeadsService {
   constructor(
@@ -42,6 +43,7 @@ export class LeadsService {
 
       return sanitized;
     } catch (error) {
+      logger.error(error);
       throw new BadRequestError(
         'Failed to create lead. Please check your input data.'
       );
@@ -134,7 +136,7 @@ export class LeadsService {
     return sanitized;
   }
 
-  async getLeads(tenantId: string, filters: any) {
+  async getLeads(tenantId: string, filters: LeadFilters) {
     const page = filters.page || 1;
     const limit = filters.limit || 20;
 

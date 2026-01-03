@@ -3,6 +3,9 @@ import { DealsService } from './deal.service';
 import { successResponse } from '../../utils/response';
 import { AuthRequest } from '../../types/authRequest';
 import { ForbiddenError } from '../../core/error';
+import { DealFilters } from './types';
+import { getQueryString } from '../../utils/query';
+import { DealStage } from '../../core/db';
 
 export class DealsController {
   constructor(private service: DealsService) {}
@@ -1239,20 +1242,14 @@ export class DealsController {
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 20;
 
-      const filters: any = {
+      const filters: DealFilters = {
         page,
         limit,
-        stage: req.query.stage || undefined,
-        assignedToId: req.query.assignedToId || undefined,
-        companyId: req.query.companyId || undefined,
-        search: req.query.search || undefined,
+        stage: this.isDealStage(req.query.stage) ? req.query.stage : undefined,
+        assignedToId: getQueryString(req.query.assignedToId),
+        companyId: getQueryString(req.query.companyId),
+        search: getQueryString(req.query.search),
       };
-
-      // Clean undefined filters
-      Object.keys(filters).forEach(
-        (key) => filters[key] === undefined && delete filters[key]
-      );
-
       const result = await this.service.getDeals(tenantId, filters);
 
       return res.json({
@@ -1264,4 +1261,11 @@ export class DealsController {
       next(error);
     }
   };
+
+  private isDealStage(value: unknown): value is DealStage {
+    return (
+      typeof value === 'string' &&
+      Object.values(DealStage).includes(value as DealStage)
+    );
+  }
 }

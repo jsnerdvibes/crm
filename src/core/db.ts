@@ -7,7 +7,6 @@ export * from '../../generated/prisma/client';
 
 // ---- Singleton Prisma Client (Prevents Hot Reload Leaks) ---- //
 declare global {
-  // eslint-disable-next-line no-var
   var __prisma: PrismaClient | undefined;
 }
 

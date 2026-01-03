@@ -2,9 +2,11 @@ import { prisma, Deal, DealStage, Prisma } from '../../core/db';
 import { IDealsRepository } from './deal.repo.interface';
 import { NotFoundError } from '../../core/error';
 import { buildSearchOR } from '../../utils/search';
+import { CreateDealDTO, UpdateDealDTO } from './dto';
+import { DealFilters } from './types';
 
 export class DealsRepository implements IDealsRepository {
-  async create(tenantId: string, data: any): Promise<Deal> {
+  async create(tenantId: string, data: CreateDealDTO): Promise<Deal> {
     return prisma.deal.create({
       data: {
         tenantId,
@@ -31,7 +33,11 @@ export class DealsRepository implements IDealsRepository {
     });
   }
 
-  async update(tenantId: string, dealId: string, data: any): Promise<Deal> {
+  async update(
+    tenantId: string,
+    dealId: string,
+    data: UpdateDealDTO
+  ): Promise<Deal> {
     await prisma.deal.updateMany({
       where: { id: dealId, tenantId },
       data,
@@ -81,12 +87,12 @@ export class DealsRepository implements IDealsRepository {
     return deal;
   }
 
-  async getDeals(tenantId: string, filters: any) {
+  async getDeals(tenantId: string, filters: DealFilters) {
     const page = Math.max(1, Number(filters.page) || 1);
     const limit = Math.max(1, Number(filters.limit) || 20);
     const skip = (page - 1) * limit;
 
-    const where: any = { tenantId };
+    const where: Prisma.DealWhereInput = { tenantId };
 
     if (
       filters.stage &&

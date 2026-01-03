@@ -2,7 +2,10 @@ import { Response, NextFunction } from 'express';
 import { LeadsService } from './leads.service';
 import { successResponse } from '../../utils/response';
 import { AuthRequest } from '../../types/authRequest';
-import { ForbiddenError } from '../../core/error';
+import { BadRequestError, ForbiddenError } from '../../core/error';
+import { isLeadStatus, LeadFilters } from './dto';
+import { getQueryString } from '../../utils/query';
+import { LeadStatus } from '../../core/db';
 
 export class LeadsController {
   constructor(private service: LeadsService) {}
@@ -953,21 +956,23 @@ export class LeadsController {
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 20;
 
-      // Build filters and automatically remove empty/undefined values
-      const filters: any = {
+      const rawStatus = req.query.status; // type: string | ParsedQs | string[] | undefined
+      let status: LeadStatus | undefined;
+
+      if (typeof rawStatus === 'string' && isLeadStatus(rawStatus)) {
+        status = rawStatus; // ✅ now TypeScript knows this is LeadStatus
+      } else {
+        status = undefined; // default if invalid
+      }
+
+      const filters: LeadFilters = {
         page,
         limit,
-        status: req.query.status || undefined,
-        source: req.query.source || undefined,
-        assignedToId: req.query.assignedToId || undefined,
-        search: req.query.search || undefined,
+        status, // type guard
+        source: getQueryString(req.query.source),
+        assignedToId: getQueryString(req.query.assignedToId),
+        search: getQueryString(req.query.search),
       };
-
-      // Remove keys where value === undefined
-      Object.keys(filters).forEach(
-        (key) => filters[key] === undefined && delete filters[key]
-      );
-
       const result = await this.service.getLeads(tenantId, filters);
 
       return res.json({
@@ -1056,12 +1061,17 @@ export class LeadsController {
    *               $ref: "#/components/responses/ServerError"
    */
 
-  convertLead = async (req: any, res: any, next: any) => {
+  convertLead = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const { id: leadId } = req.params;
       const tenantId = req.user?.tenantId;
       const performedById = req.user?.id;
 
+      if (!tenantId || !leadId || !performedById) {
+        throw new BadRequestError(
+          'Missing required information to convert lead'
+        );
+      }
       const result = await this.service.convertLead(
         tenantId,
         leadId,

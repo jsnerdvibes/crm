@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { errorResponse, successResponse } from '../../utils/response';
 import { logger } from '../../core/logger';
+import { getErrorMessage } from '../../utils/getErrorMessage';
+import { AppError } from '../../core/error';
 
 export class AuthController {
   constructor(private service: AuthService) {}
@@ -141,7 +143,7 @@ export class AuthController {
       return res
         .status(201)
         .json(successResponse('Tenant and Admin created successfully', result));
-    } catch (error: any) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -406,10 +408,15 @@ export class AuthController {
       const tokens = await this.service.refreshAccessToken(refreshToken);
 
       return res.status(200).json(successResponse('Token refreshed', tokens));
-    } catch (err: any) {
-      return res
-        .status(401)
-        .json(errorResponse(err.message || 'Invalid refresh token'));
+    } catch (err: unknown) {
+      if (err instanceof AppError) {
+        return res
+          .status(401)
+          .json(errorResponse(err.message || 'Invalid refresh token'));
+      }
+
+      // fallback if it's not an Error
+      return res.status(401).json(errorResponse('Invalid refresh token'));
     }
   };
 
@@ -503,10 +510,10 @@ export class AuthController {
       return res
         .status(200)
         .json(successResponse('Logged out successfully', {}));
-    } catch (err: any) {
+    } catch (err: unknown) {
       return res
         .status(500)
-        .json(errorResponse(err.message || 'Logout failed'));
+        .json(errorResponse(getErrorMessage(err, 'Logout failed')));
     }
   };
 }

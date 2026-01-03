@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Prisma } from '../../core/db';
 
 /**
  * Internal Create Audit Log DTO
@@ -47,7 +48,7 @@ export interface AuditLogResponse {
   resource: string;
   resourceId: string;
 
-  meta?: any;
+  meta?: Prisma.JsonValue;
   createdAt: Date;
 }
 

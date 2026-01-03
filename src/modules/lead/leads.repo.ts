@@ -1,6 +1,6 @@
 import { prisma, Lead, Prisma, LeadStatus } from '../../core/db';
 import { ILeadsRepository } from './leads.repo.interface';
-import { CreateLeadDTO, UpdateLeadDTO } from './dto';
+import { CreateLeadDTO, LeadFilters, UpdateLeadDTO } from './dto';
 import { NotFoundError } from '../../core/error';
 import { buildSearchOR } from '../../utils/search';
 
@@ -74,12 +74,12 @@ export class LeadsRepository implements ILeadsRepository {
     return lead;
   }
 
-  async getLeads(tenantId: string, filters: any) {
+  async getLeads(tenantId: string, filters: LeadFilters) {
     const page = filters.page || 1;
     const limit = filters.limit || 20;
     const skip = (page - 1) * limit;
 
-    const where: any = { tenantId };
+    const where: Prisma.LeadWhereInput = { tenantId };
 
     if (filters.status && Object.values(LeadStatus).includes(filters.status)) {
       where.status = filters.status;
