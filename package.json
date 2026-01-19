@@ -29,6 +29,7 @@
     "pino-pretty": "^13.1.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "vitest": "^4.0.17",
     "zod": "^4.1.13"
   },
   "devDependencies": {
