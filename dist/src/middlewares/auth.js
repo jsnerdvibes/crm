@@ -8,7 +8,8 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = require("../config");
 const db_1 = require("../core/db");
 const error_1 = require("../core/error");
-const authenticate = async (req, res, next) => {
+const logger_1 = require("../core/logger");
+const authenticate = async (req, _res, next) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader) {
@@ -31,6 +32,7 @@ const authenticate = async (req, res, next) => {
         next();
     }
     catch (error) {
+        logger_1.logger.error(error);
         throw new error_1.UnauthorizedError('Invalid User');
     }
 };

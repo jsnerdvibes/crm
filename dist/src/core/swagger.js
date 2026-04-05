@@ -15,27 +15,169 @@ const options = {
             version: '1.0.0',
             description: 'API Documentation for CRM',
         },
-        components: {
-            securitySchemes: {
-                bearerAuth: {
-                    type: 'http',
-                    scheme: 'bearer',
-                    bearerFormat: 'JWT', // optional, for clarity
-                },
-            },
-        },
-        security: [
-            {
-                bearerAuth: [], // apply globally
-            },
-        ],
         servers: [
             {
                 url: `http://localhost:${config_1.config.app.port}`,
             },
         ],
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+            responses: {
+                Unauthorized: {
+                    description: 'Unauthorized – invalid or missing token',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    status: {
+                                        type: 'string',
+                                        example: 'error',
+                                    },
+                                    message: {
+                                        type: 'string',
+                                        example: 'Unauthorized',
+                                    },
+                                    data: {
+                                        type: 'object',
+                                        example: {},
+                                    },
+                                    errors: {
+                                        type: 'array',
+                                        items: {},
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                Forbidden: {
+                    description: 'Forbidden – user not authorized',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    status: {
+                                        type: 'string',
+                                        example: 'error',
+                                    },
+                                    message: {
+                                        type: 'string',
+                                        example: 'Forbidden',
+                                    },
+                                    data: {
+                                        type: 'object',
+                                        example: {},
+                                    },
+                                    errors: {
+                                        type: 'array',
+                                        items: {},
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                NotFound: {
+                    description: 'Resource not found',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    status: {
+                                        type: 'string',
+                                        example: 'error',
+                                    },
+                                    message: {
+                                        type: 'string',
+                                        example: 'Resource not found',
+                                    },
+                                    data: {
+                                        type: 'object',
+                                        example: {},
+                                    },
+                                    errors: {
+                                        type: 'array',
+                                        items: {},
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                BadRequest: {
+                    description: 'Bad request',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    status: {
+                                        type: 'string',
+                                        example: 'error',
+                                    },
+                                    message: {
+                                        type: 'string',
+                                        example: 'Bad request',
+                                    },
+                                    data: {
+                                        type: 'object',
+                                        example: {},
+                                    },
+                                    errors: {
+                                        type: 'array',
+                                        items: {},
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                ServerError: {
+                    description: 'Internal server error',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    status: {
+                                        type: 'string',
+                                        example: 'error',
+                                    },
+                                    message: {
+                                        type: 'string',
+                                        example: 'Something went wrong',
+                                    },
+                                    data: {
+                                        type: 'object',
+                                        example: {},
+                                    },
+                                    errors: {
+                                        type: 'array',
+                                        items: {},
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
     },
-    apis: ['./src/modules/**/*.ts'], // <-- scan all modules for JSDoc comments
+    apis: ['./src/modules/**/*.ts'],
 };
 const specs = (0, swagger_jsdoc_1.default)(options);
 const setupSwagger = (app) => {

@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.leadsController = exports.leadsService = exports.leadsRepository = void 0;
+const leads_repo_1 = require("./leads.repo");
+const leads_service_1 = require("./leads.service");
+const leads_controller_1 = require("./leads.controller");
+const contacts_repo_1 = require("../contact/contacts.repo");
+const deal_repo_1 = require("../deal/deal.repo");
+exports.leadsRepository = new leads_repo_1.LeadsRepository();
+const contactsRepo = new contacts_repo_1.ContactsRepository();
+const dealsRepo = new deal_repo_1.DealsRepository();
+exports.leadsService = new leads_service_1.LeadsService(exports.leadsRepository, contactsRepo, dealsRepo);
+exports.leadsController = new leads_controller_1.LeadsController(exports.leadsService);

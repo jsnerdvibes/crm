@@ -1,5 +1,3 @@
-import { AppError } from '../core/error';
-
 export const successResponse = (message: string, data: unknown = {}) => ({
   status: 'success',
   message,

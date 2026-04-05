@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const response_1 = require("../../utils/response");
 const logger_1 = require("../../core/logger");
+const getErrorMessage_1 = require("../../utils/getErrorMessage");
+const error_1 = require("../../core/error");
 class AuthController {
     constructor(service) {
         this.service = service;
@@ -402,9 +404,13 @@ class AuthController {
                 return res.status(200).json((0, response_1.successResponse)('Token refreshed', tokens));
             }
             catch (err) {
-                return res
-                    .status(401)
-                    .json((0, response_1.errorResponse)(err.message || 'Invalid refresh token'));
+                if (err instanceof error_1.AppError) {
+                    return res
+                        .status(401)
+                        .json((0, response_1.errorResponse)(err.message || 'Invalid refresh token'));
+                }
+                // fallback if it's not an Error
+                return res.status(401).json((0, response_1.errorResponse)('Invalid refresh token'));
             }
         };
         /**
@@ -500,7 +506,7 @@ class AuthController {
             catch (err) {
                 return res
                     .status(500)
-                    .json((0, response_1.errorResponse)(err.message || 'Logout failed'));
+                    .json((0, response_1.errorResponse)((0, getErrorMessage_1.getErrorMessage)(err, 'Logout failed')));
             }
         };
     }

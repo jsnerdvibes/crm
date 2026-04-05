@@ -52,7 +52,7 @@ exports.config = {
         user: env.DATABASE_USER,
         password: env.DATABASE_PASSWORD,
         dbName: env.DATABASE_NAME,
-        dbPort: env.DATABASE_PORT
+        dbPort: env.DATABASE_PORT,
     },
     jwt: {
         secret: env.JWT_SECRET,

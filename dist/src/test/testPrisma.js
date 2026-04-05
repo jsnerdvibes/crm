@@ -2,16 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // src/testPrisma.ts
 const db_1 = require("../core/db");
+const logger_1 = require("../core/logger");
 async function main() {
     try {
-        console.log('Fetching users from the database...');
+        logger_1.logger.info('Fetching users from the database...');
         const users = await db_1.prisma.user.findMany();
-        console.log('✅ Users fetched successfully:');
-        console.log(users);
+        logger_1.logger.info('✅ Users fetched successfully:');
+        logger_1.logger.info(users);
     }
     catch (err) {
-        console.error('❌ Error fetching users:');
-        console.error(err);
+        logger_1.logger.error('❌ Error fetching users:');
+        logger_1.logger.error(err);
     }
     finally {
         await db_1.prisma.$disconnect();

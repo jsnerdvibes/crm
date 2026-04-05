@@ -5,7 +5,7 @@ const error_1 = require("../core/error");
 const response_1 = require("../utils/response");
 const logger_1 = require("../core/logger");
 const config_1 = require("../config");
-function errorHandler(err, req, res, next) {
+function errorHandler(err, _req, res, _next) {
     // Log error (can replace with pino/winston)
     logger_1.logger.error(err);
     let statusCode = 500;
@@ -14,7 +14,7 @@ function errorHandler(err, req, res, next) {
     if (err instanceof error_1.AppError) {
         statusCode = err.statusCode;
         message = err.message;
-        const errors = err.errors || [];
+        errors = err.errors ?? [];
         return res.status(statusCode).json({
             ...(0, response_1.errorResponse)(message, errors),
             ...(config_1.config.app.env === 'development' && { stack: err.stack }),

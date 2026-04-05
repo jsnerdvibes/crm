@@ -8,6 +8,7 @@ const successResponse = (message, data = {}) => ({
     errors: [],
 });
 exports.successResponse = successResponse;
+// utils/response.ts
 const errorResponse = (message, errors = []) => ({
     status: 'error',
     message,

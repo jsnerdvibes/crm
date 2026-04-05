@@ -1,15 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UnprocessableEntityError = exports.ForbiddenError = exports.UnauthorizedError = exports.BadRequestError = exports.NotFoundError = exports.AppError = void 0;
+exports.ConflictError = exports.UnprocessableEntityError = exports.ForbiddenError = exports.UnauthorizedError = exports.BadRequestError = exports.NotFoundError = exports.AppError = void 0;
 class AppError extends Error {
-    constructor(message, statusCode = 500, isOperational = true) {
+    constructor(message, statusCode, errors) {
         super(message);
         this.statusCode = statusCode;
-        this.isOperational = isOperational;
-        // Maintains proper stack trace
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, this.constructor);
-        }
+        this.errors = errors;
+        Object.setPrototypeOf(this, new.target.prototype);
+        Error.captureStackTrace(this);
     }
 }
 exports.AppError = AppError;
@@ -44,3 +42,9 @@ class UnprocessableEntityError extends AppError {
     }
 }
 exports.UnprocessableEntityError = UnprocessableEntityError;
+class ConflictError extends AppError {
+    constructor(message = 'Conflict') {
+        super(message, 409);
+    }
+}
+exports.ConflictError = ConflictError;

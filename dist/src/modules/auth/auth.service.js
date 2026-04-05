@@ -10,6 +10,7 @@ const config_1 = require("../../config");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const hash_1 = require("../../utils/hash");
 const logger_1 = require("../../core/logger");
+const db_1 = require("../../core/db");
 class AuthService {
     constructor(repo) {
         this.repo = repo;
@@ -22,10 +23,14 @@ class AuthService {
             tenant = await this.repo.createTenant(data.tenantName, slug);
         }
         catch (error) {
-            if (error.code === 'P2002') {
+            if (error instanceof db_1.Prisma.PrismaClientKnownRequestError &&
+                error.code === 'P2002') {
                 throw new error_1.BadRequestError('Tenant with this name already exists');
             }
-            throw error;
+            if (error instanceof Error) {
+                throw error;
+            }
+            throw new Error('Unknown database error');
         }
         const passwordHash = await bcrypt_1.default.hash(data.password, Number(config_1.config.bcrypt.saltRounds));
         const admin = await this.repo.createUser(tenant.id, data.email, passwordHash, 'ADMIN');
