@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.config = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 const zod_1 = require("zod");
-const logger_1 = require("../core/logger");
 // Load env
 dotenv_1.default.config();
 // Schema validation
@@ -15,6 +14,7 @@ const envSchema = zod_1.z.object({
         .enum(['development', 'production', 'test'])
         .default('development'),
     PORT: zod_1.z.string().default('4000'),
+    CORS_ORIGINS: zod_1.z.string().default('http://localhost:3001'),
     DATABASE_HOST: zod_1.z.string(),
     DATABASE_USER: zod_1.z.string(),
     DATABASE_PASSWORD: zod_1.z.string(),
@@ -32,9 +32,9 @@ const envSchema = zod_1.z.object({
 });
 const parsed = envSchema.safeParse(process.env);
 if (!parsed.success) {
-    logger_1.logger.error('Invalid environment variables:');
-    logger_1.logger.error(parsed.error.toString());
-    logger_1.logger.error(parsed.error.issues);
+    console.error('Invalid environment variables:');
+    console.error(parsed.error.toString());
+    console.error(parsed.error.issues);
     process.exit(1);
 }
 const env = parsed.data;
@@ -43,6 +43,9 @@ exports.config = {
     app: {
         env: env.NODE_ENV,
         port: Number(env.PORT),
+        corsOrigins: env.CORS_ORIGINS.split(',')
+            .map((origin) => origin.trim())
+            .filter(Boolean),
     },
     bcrypt: {
         saltRounds: Number(env.BCRYPT_SALT_ROUNDS),

@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import { z } from 'zod';
-import { logger } from '../core/logger';
 
 // Load env
 dotenv.config();
@@ -12,6 +11,7 @@ const envSchema = z.object({
     .default('development'),
 
   PORT: z.string().default('4000'),
+  CORS_ORIGINS: z.string().default('http://localhost:3001'),
 
   DATABASE_HOST: z.string(),
   DATABASE_USER: z.string(),
@@ -35,9 +35,9 @@ const envSchema = z.object({
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  logger.error('Invalid environment variables:');
-  logger.error(parsed.error.toString());
-  logger.error(parsed.error.issues);
+  console.error('Invalid environment variables:');
+  console.error(parsed.error.toString());
+  console.error(parsed.error.issues);
   process.exit(1);
 }
 
@@ -48,6 +48,9 @@ export const config = {
   app: {
     env: env.NODE_ENV,
     port: Number(env.PORT),
+    corsOrigins: env.CORS_ORIGINS.split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean),
   },
 
   bcrypt: {

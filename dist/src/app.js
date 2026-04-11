@@ -13,16 +13,20 @@ const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 // import { startJobs } from './jobs/jobRunner';
 const rateLimiter_1 = require("./middlewares/rateLimiter");
+const config_1 = require("./config");
+const db_1 = require("./core/db");
 exports.app = (0, express_1.default)();
 exports.app.use((0, helmet_1.default)());
 exports.app.use((0, cors_1.default)({
-    origin: ['http://localhost:3001', 'https://test-saas-crm.lovable.app'],
+    origin: config_1.config.app.corsOrigins,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
 }));
 exports.app.use(express_1.default.json());
 exports.app.use(requestLogger_1.requestLogger);
-(0, swagger_1.setupSwagger)(exports.app);
+if (config_1.config.app.env !== 'production') {
+    (0, swagger_1.setupSwagger)(exports.app);
+}
 exports.app.use('/api/v1/', rateLimiter_1.apiLimiter);
 exports.app.use('/api/v1', api_routes_1.apiRoutes);
 // startJobs();
@@ -36,5 +40,20 @@ exports.app.get('/health', (req, res) => {
         status: 'ok',
         timestamp: new Date().toISOString(),
     });
+});
+exports.app.get('/ready', async (_req, res) => {
+    try {
+        await db_1.prisma.$queryRawUnsafe('SELECT 1');
+        res.status(200).json({
+            status: 'ok',
+            timestamp: new Date().toISOString(),
+        });
+    }
+    catch {
+        res.status(503).json({
+            status: 'error',
+            timestamp: new Date().toISOString(),
+        });
+    }
 });
 exports.app.use(errorHandler_1.errorHandler);

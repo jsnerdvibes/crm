@@ -5,6 +5,16 @@ import { tenantScope, PrismaQuery } from './tenantScope';
 
 export * from '../../generated/prisma/client';
 
+const TENANT_DATABASE_NAME_REGEX = /^[A-Za-z0-9_]+$/;
+
+function assertValidTenantDatabaseName(tenantId: string) {
+  if (!TENANT_DATABASE_NAME_REGEX.test(tenantId)) {
+    throw new Error('Invalid tenant identifier');
+  }
+
+  return tenantId;
+}
+
 // ---- Singleton Prisma Client (Prevents Hot Reload Leaks) ---- //
 declare global {
   var __prisma: PrismaClient | undefined;
@@ -39,6 +49,10 @@ if (config.app.env !== 'production') {
     */
 export function db(tenantId?: string) {
   const mode = config.tenancy.mode;
+  const tenantDatabaseName =
+    mode === 'schema' && tenantId
+      ? assertValidTenantDatabaseName(tenantId)
+      : undefined;
 
   // -------- SCHEMA MODE -------- //
   if (mode === 'schema') {
@@ -50,7 +64,7 @@ export function db(tenantId?: string) {
         $allModels: {
           async $allOperations({ query, args }) {
             // Switch MariaDB schema (database)
-            await prisma.$executeRawUnsafe(`USE \`${tenantId}\`;`);
+            await prisma.$executeRawUnsafe(`USE \`${tenantDatabaseName}\`;`);
             return query(args);
           },
         },

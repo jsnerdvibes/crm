@@ -21,6 +21,13 @@ const adapter_mariadb_1 = require("@prisma/adapter-mariadb");
 const config_1 = require("../config");
 const tenantScope_1 = require("./tenantScope");
 __exportStar(require("../../generated/prisma/client"), exports);
+const TENANT_DATABASE_NAME_REGEX = /^[A-Za-z0-9_]+$/;
+function assertValidTenantDatabaseName(tenantId) {
+    if (!TENANT_DATABASE_NAME_REGEX.test(tenantId)) {
+        throw new Error('Invalid tenant identifier');
+    }
+    return tenantId;
+}
 const adapter = new adapter_mariadb_1.PrismaMariaDb({
     host: config_1.config.database.host,
     user: config_1.config.database.user,
@@ -47,6 +54,9 @@ if (config_1.config.app.env !== 'production') {
     */
 function db(tenantId) {
     const mode = config_1.config.tenancy.mode;
+    const tenantDatabaseName = mode === 'schema' && tenantId
+        ? assertValidTenantDatabaseName(tenantId)
+        : undefined;
     // -------- SCHEMA MODE -------- //
     if (mode === 'schema') {
         if (!tenantId)
@@ -56,7 +66,7 @@ function db(tenantId) {
                 $allModels: {
                     async $allOperations({ query, args }) {
                         // Switch MariaDB schema (database)
-                        await prisma.$executeRawUnsafe(`USE \`${tenantId}\`;`);
+                        await prisma.$executeRawUnsafe(`USE \`${tenantDatabaseName}\`;`);
                         return query(args);
                     },
                 },

@@ -7,13 +7,15 @@ import cors from 'cors';
 import helmet from 'helmet';
 // import { startJobs } from './jobs/jobRunner';
 import { apiLimiter } from './middlewares/rateLimiter';
+import { config } from './config';
+import { prisma } from './core/db';
 
 export const app = express();
 
 app.use(helmet());
 app.use(
   cors({
-    origin: ['http://localhost:3001', 'https://test-saas-crm.lovable.app'],
+    origin: config.app.corsOrigins,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
   })
@@ -22,7 +24,9 @@ app.use(
 app.use(express.json());
 app.use(requestLogger);
 
-setupSwagger(app);
+if (config.app.env !== 'production') {
+  setupSwagger(app);
+}
 
 app.use('/api/v1/', apiLimiter);
 
@@ -41,6 +45,21 @@ app.get('/health', (req, res) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
   });
+});
+
+app.get('/ready', async (_req, res) => {
+  try {
+    await prisma.$queryRawUnsafe('SELECT 1');
+    res.status(200).json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+    });
+  } catch {
+    res.status(503).json({
+      status: 'error',
+      timestamp: new Date().toISOString(),
+    });
+  }
 });
 
 app.use(errorHandler);
