@@ -1078,10 +1078,7 @@ export class LeadsController {
         performedById
       );
 
-      return res.status(200).json({
-        message: 'Lead converted successfully',
-        data: result,
-      });
+      return res.status(200).json(successResponse('Lead converted successfully', result));
     } catch (error) {
       next(error);
     }
