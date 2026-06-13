@@ -6,7 +6,9 @@ import { config } from '../config';
 // Create transport only in development
 let transport;
 
-if (config.app.env !== 'production') {
+const isServerless = process.env.VERCEL === '1' || process.env.AWS_LAMBDA_FUNCTION_NAME !== undefined;
+
+if (config.app.env !== 'production' && !isServerless) {
   const logDir = path.resolve(__dirname, '../../logs');
 
   // Ensure logs folder exists

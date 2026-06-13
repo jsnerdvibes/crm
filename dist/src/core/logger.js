@@ -10,7 +10,8 @@ const pino_1 = __importDefault(require("pino"));
 const config_1 = require("../config");
 // Create transport only in development
 let transport;
-if (config_1.config.app.env !== 'production') {
+const isServerless = process.env.VERCEL === '1' || process.env.AWS_LAMBDA_FUNCTION_NAME !== undefined;
+if (config_1.config.app.env !== 'production' && !isServerless) {
     const logDir = path_1.default.resolve(__dirname, '../../logs');
     // Ensure logs folder exists
     if (!fs_1.default.existsSync(logDir)) {
