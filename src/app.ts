@@ -12,7 +12,19 @@ import { prisma } from './core/db';
 
 export const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
+        imgSrc: ["'self'", "data:", "cdnjs.cloudflare.com"],
+        connectSrc: ["'self'"],
+      },
+    },
+  })
+);
 app.use(
   cors({
     origin: config.app.corsOrigins,

@@ -16,7 +16,17 @@ const rateLimiter_1 = require("./middlewares/rateLimiter");
 const config_1 = require("./config");
 const db_1 = require("./core/db");
 exports.app = (0, express_1.default)();
-exports.app.use((0, helmet_1.default)());
+exports.app.use((0, helmet_1.default)({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
+            imgSrc: ["'self'", "data:", "cdnjs.cloudflare.com"],
+            connectSrc: ["'self'"],
+        },
+    },
+}));
 exports.app.use((0, cors_1.default)({
     origin: config_1.config.app.corsOrigins,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
