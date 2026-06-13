@@ -24,9 +24,7 @@ exports.app.use((0, cors_1.default)({
 }));
 exports.app.use(express_1.default.json());
 exports.app.use(requestLogger_1.requestLogger);
-if (config_1.config.app.env !== 'production') {
-    (0, swagger_1.setupSwagger)(exports.app);
-}
+(0, swagger_1.setupSwagger)(exports.app);
 exports.app.use('/api/v1/', rateLimiter_1.apiLimiter);
 exports.app.use('/api/v1', api_routes_1.apiRoutes);
 // startJobs();

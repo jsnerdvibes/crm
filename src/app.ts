@@ -24,9 +24,7 @@ app.use(
 app.use(express.json());
 app.use(requestLogger);
 
-if (config.app.env !== 'production') {
-  setupSwagger(app);
-}
+setupSwagger(app);
 
 app.use('/api/v1/', apiLimiter);
 
