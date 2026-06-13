@@ -4,7 +4,7 @@ import { Response } from 'express';
 import { SettingService } from './setting.service';
 import { successResponse } from '../../utils/response';
 import { AuthRequest } from '../../types/authRequest';
-import { ForbiddenError } from '../../core/error';
+import { ForbiddenError, NotFoundError } from '../../core/error';
 
 export class SettingController {
   constructor(private readonly service: SettingService) {}
@@ -168,6 +168,9 @@ export class SettingController {
     const { key } = req.params;
 
     const setting = await this.service.getByKey(tenantId, key);
+    if (!setting) {
+      throw new NotFoundError('Setting not found');
+    }
     return res.json(successResponse('Setting fetched', setting));
   };
 
