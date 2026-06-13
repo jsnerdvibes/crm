@@ -3,8 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setupSwagger = void 0;
-const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
+exports.setupSwagger = exports.options = void 0;
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const config_1 = require("../config");
 const options = {
@@ -179,7 +178,8 @@ const options = {
     },
     apis: ['./src/modules/**/*.ts'],
 };
-const specs = (0, swagger_jsdoc_1.default)(options);
+exports.options = options;
+const swagger_spec_json_1 = __importDefault(require("./swagger-spec.json"));
 const setupSwagger = (app) => {
     const swaggerOptions = {
         customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
@@ -188,6 +188,6 @@ const setupSwagger = (app) => {
             'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js',
         ],
     };
-    app.use('/api/v1/docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(specs, swaggerOptions));
+    app.use('/api/v1/docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_spec_json_1.default, swaggerOptions));
 };
 exports.setupSwagger = setupSwagger;

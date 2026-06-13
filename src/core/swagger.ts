@@ -185,7 +185,9 @@ const options: swaggerJsdoc.Options = {
   apis: ['./src/modules/**/*.ts'],
 };
 
-const specs = swaggerJsdoc(options);
+export { options };
+
+import specs from './swagger-spec.json';
 
 export const setupSwagger = (app: Express) => {
   const swaggerOptions = {

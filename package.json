@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "ts-node-dev --respawn --ignore-watch node_modules -- src/server.ts",
-    "build": "prisma generate && tsc",
+    "build": "prisma generate && ts-node src/core/generateSwagger.ts && tsc",
     "start": "node dist/src/server.js",
     "lint": "eslint src/**/*.{ts,tsx,js,jsx} --format stylish",
     "lint:fix": "eslint src/**/*.{ts,tsx,js,jsx} --fix --format stylish",
