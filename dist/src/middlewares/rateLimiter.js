@@ -5,9 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.apiLimiter = void 0;
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
+const config_1 = require("../config");
 exports.apiLimiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 10, // limit each IP to 100 requests per windowMs
+    max: config_1.config.app.env === 'test' ? 10000 : 10, // limit each IP to 100 requests per windowMs
     standardHeaders: true,
     legacyHeaders: false,
     message: {

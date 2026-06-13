@@ -154,6 +154,9 @@ class SettingController {
             const tenantId = this.getTenantId(req);
             const { key } = req.params;
             const setting = await this.service.getByKey(tenantId, key);
+            if (!setting) {
+                throw new error_1.NotFoundError('Setting not found');
+            }
             return res.json((0, response_1.successResponse)('Setting fetched', setting));
         };
         /**

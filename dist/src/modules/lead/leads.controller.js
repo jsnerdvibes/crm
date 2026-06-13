@@ -1022,10 +1022,7 @@ class LeadsController {
                     throw new error_1.BadRequestError('Missing required information to convert lead');
                 }
                 const result = await this.service.convertLead(tenantId, leadId, performedById);
-                return res.status(200).json({
-                    message: 'Lead converted successfully',
-                    data: result,
-                });
+                return res.status(200).json((0, response_1.successResponse)('Lead converted successfully', result));
             }
             catch (error) {
                 next(error);
