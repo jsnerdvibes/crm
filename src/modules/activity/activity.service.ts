@@ -20,7 +20,7 @@ export class ActivitiesService {
     performedById?: string
   ): Promise<ActivityResponse> {
     try {
-      const activity = await this.repo.create(tenantId, actorId, data);
+      const activity = await this.repo.create(tenantId, { ...data, actorId });
       const sanitized = this.sanitize(activity);
 
       // log audit

@@ -24,7 +24,12 @@ class UsersService {
             throw new error_1.BadRequestError('Email already exists');
         }
         const passwordHash = await bcrypt_1.default.hash(data.password, Number(config_1.config.bcrypt.saltRounds));
-        const user = await this.repo.create(tenantId, data.email, passwordHash, data.role, data.name);
+        const user = await this.repo.create(tenantId, {
+            email: data.email,
+            passwordHash,
+            role: data.role,
+            name: data.name,
+        });
         const sanitized = this.sanitize(user);
         await (0, audit_log_1.logAudit)(tenantId, performedById, logActions_1.LogActions.CREATE, logActions_1.LogResources.USER, user.id, { title: user.name });
         return sanitized;

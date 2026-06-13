@@ -14,7 +14,7 @@ class ActivitiesService {
     // -------------------------
     async createActivity(tenantId, actorId, data, performedById) {
         try {
-            const activity = await this.repo.create(tenantId, actorId, data);
+            const activity = await this.repo.create(tenantId, { ...data, actorId });
             const sanitized = this.sanitize(activity);
             // log audit
             await (0, audit_log_1.logAudit)(tenantId, performedById, logActions_1.LogActions.CREATE, logActions_1.LogResources.ACTIVITY, activity.id, { title: activity.body });

@@ -1,27 +1,8 @@
 import { Lead, Prisma } from '../../core/db';
 import { CreateLeadDTO, UpdateLeadDTO } from './dto';
+import { IBaseRepository } from '../../core/base.repository';
 
-export interface ILeadsRepository {
-  /**
-   * Create a new lead for a tenant
-   */
-  create(tenantId: string, data: CreateLeadDTO): Promise<Lead>;
-
-  /**
-   * Find lead by ID within a tenant
-   */
-  findById(tenantId: string, leadId: string): Promise<Lead | null>;
-
-  /**
-   * Update an existing lead
-   */
-  update(tenantId: string, leadId: string, data: UpdateLeadDTO): Promise<Lead>;
-
-  /**
-   * Delete a lead
-   */
-  delete(tenantId: string, leadId: string): Promise<void>;
-
+export interface ILeadsRepository extends IBaseRepository<Lead, CreateLeadDTO, UpdateLeadDTO> {
   assignLead(
     tenantId: string,
     leadId: string,
@@ -40,14 +21,8 @@ export interface ILeadsRepository {
     }
   ): Promise<{ leads: Lead[]; total: number }>;
 
-  /**
-   * Find lead by ID with relations (used for conversion)
-   */
   findByIdWithRelations(tenantId: string, leadId: string): Promise<Lead | null>;
 
-  /**
-   * Update lead inside a transaction
-   */
   updateTx(
     tx: Prisma.TransactionClient,
     leadId: string,

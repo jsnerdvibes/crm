@@ -4,52 +4,10 @@ exports.LeadsRepository = void 0;
 const db_1 = require("../../core/db");
 const error_1 = require("../../core/error");
 const search_1 = require("../../utils/search");
-class LeadsRepository {
-    // Create a new lead
-    async create(tenantId, data) {
-        return db_1.prisma.lead.create({
-            data: {
-                tenantId,
-                title: data.title,
-                description: data.description,
-                source: data.source,
-                status: data.status,
-                contactId: data.contactId,
-                assignedToId: data.assignedToId,
-            },
-        });
-    }
-    // Find a lead by ID within a tenant
-    async findById(tenantId, leadId) {
-        return db_1.prisma.lead.findFirst({
-            where: {
-                id: leadId,
-                tenantId,
-            },
-        });
-    }
-    // Update a lead
-    async update(tenantId, leadId, data) {
-        await db_1.prisma.lead.updateMany({
-            where: {
-                id: leadId,
-                tenantId,
-            },
-            data,
-        });
-        const lead = await this.findById(tenantId, leadId);
-        if (!lead)
-            throw new error_1.NotFoundError('Lead not found');
-        return lead;
-    }
-    // Delete a lead
-    async delete(tenantId, leadId) {
-        await db_1.prisma.lead.deleteMany({
-            where: {
-                id: leadId,
-                tenantId,
-            },
-        });
+const base_repository_1 = require("../../core/base.repository");
+class LeadsRepository extends base_repository_1.BaseRepository {
+    constructor() {
+        super('lead');
     }
     async assignLead(tenantId, leadId, assignedToId) {
         await db_1.prisma.lead.updateMany({

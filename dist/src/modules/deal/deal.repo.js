@@ -4,44 +4,15 @@ exports.DealsRepository = void 0;
 const db_1 = require("../../core/db");
 const error_1 = require("../../core/error");
 const search_1 = require("../../utils/search");
-class DealsRepository {
-    async create(tenantId, data) {
-        return db_1.prisma.deal.create({
-            data: {
-                tenantId,
-                title: data.title,
-                amount: data.amount,
-                probability: data.probability,
-                stage: data.stage,
-                companyId: data.companyId,
-                assignedToId: data.assignedToId,
-            },
-        });
-    }
-    async findById(tenantId, dealId) {
-        return db_1.prisma.deal.findFirst({
-            where: { id: dealId, tenantId },
-        });
+const base_repository_1 = require("../../core/base.repository");
+class DealsRepository extends base_repository_1.BaseRepository {
+    constructor() {
+        super('deal');
     }
     async findAll(tenantId) {
         return db_1.prisma.deal.findMany({
             where: { tenantId },
             orderBy: { createdAt: 'desc' },
-        });
-    }
-    async update(tenantId, dealId, data) {
-        await db_1.prisma.deal.updateMany({
-            where: { id: dealId, tenantId },
-            data,
-        });
-        const deal = await this.findById(tenantId, dealId);
-        if (!deal)
-            throw new error_1.NotFoundError('Deal not found');
-        return deal;
-    }
-    async delete(tenantId, dealId) {
-        await db_1.prisma.deal.deleteMany({
-            where: { id: dealId, tenantId },
         });
     }
     async assign(tenantId, dealId, assignedToId) {

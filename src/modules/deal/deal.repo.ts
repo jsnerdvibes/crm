@@ -4,54 +4,17 @@ import { NotFoundError } from '../../core/error';
 import { buildSearchOR } from '../../utils/search';
 import { CreateDealDTO, UpdateDealDTO } from './dto';
 import { DealFilters } from './types';
+import { BaseRepository } from '../../core/base.repository';
 
-export class DealsRepository implements IDealsRepository {
-  async create(tenantId: string, data: CreateDealDTO): Promise<Deal> {
-    return prisma.deal.create({
-      data: {
-        tenantId,
-        title: data.title,
-        amount: data.amount,
-        probability: data.probability,
-        stage: data.stage,
-        companyId: data.companyId,
-        assignedToId: data.assignedToId,
-      },
-    });
-  }
-
-  async findById(tenantId: string, dealId: string): Promise<Deal | null> {
-    return prisma.deal.findFirst({
-      where: { id: dealId, tenantId },
-    });
+export class DealsRepository extends BaseRepository<Deal, CreateDealDTO, UpdateDealDTO> implements IDealsRepository {
+  constructor() {
+    super('deal');
   }
 
   async findAll(tenantId: string): Promise<Deal[]> {
     return prisma.deal.findMany({
       where: { tenantId },
       orderBy: { createdAt: 'desc' },
-    });
-  }
-
-  async update(
-    tenantId: string,
-    dealId: string,
-    data: UpdateDealDTO
-  ): Promise<Deal> {
-    await prisma.deal.updateMany({
-      where: { id: dealId, tenantId },
-      data,
-    });
-
-    const deal = await this.findById(tenantId, dealId);
-    if (!deal) throw new NotFoundError('Deal not found');
-
-    return deal;
-  }
-
-  async delete(tenantId: string, dealId: string): Promise<void> {
-    await prisma.deal.deleteMany({
-      where: { id: dealId, tenantId },
     });
   }
 

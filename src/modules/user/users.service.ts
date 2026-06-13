@@ -33,13 +33,12 @@ export class UsersService {
       Number(config.bcrypt.saltRounds)
     );
 
-    const user = await this.repo.create(
-      tenantId,
-      data.email,
+    const user = await this.repo.create(tenantId, {
+      email: data.email,
       passwordHash,
-      data.role,
-      data.name
-    );
+      role: data.role,
+      name: data.name,
+    });
 
     const sanitized = this.sanitize(user);
 

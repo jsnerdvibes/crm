@@ -1,36 +1,9 @@
 import { Deal, DealStage, Prisma } from '../../core/db';
+import { IBaseRepository } from '../../core/base.repository';
+import { CreateDealDTO, UpdateDealDTO } from './dto';
 
-export interface IDealsRepository {
-  create(
-    tenantId: string,
-    data: {
-      title: string;
-      amount?: number | null;
-      probability?: number | null;
-      stage: DealStage;
-      companyId?: string | null;
-      assignedToId?: string | null;
-    }
-  ): Promise<Deal>;
-
-  findById(tenantId: string, dealId: string): Promise<Deal | null>;
-
+export interface IDealsRepository extends IBaseRepository<Deal, CreateDealDTO, UpdateDealDTO> {
   findAll(tenantId: string): Promise<Deal[]>;
-
-  update(
-    tenantId: string,
-    dealId: string,
-    data: Partial<{
-      title: string;
-      amount?: number | null;
-      probability?: number | null;
-      stage: DealStage;
-      companyId?: string | null;
-      assignedToId?: string | null;
-    }>
-  ): Promise<Deal>;
-
-  delete(tenantId: string, dealId: string): Promise<void>;
 
   assign(tenantId: string, dealId: string, assignedToId: string): Promise<Deal>;
 
@@ -40,9 +13,6 @@ export interface IDealsRepository {
     stage: DealStage
   ): Promise<Deal>;
 
-  /**
-   * Pagination + Filtering
-   */
   getDeals(
     tenantId: string,
     filters: {
@@ -53,11 +23,8 @@ export interface IDealsRepository {
       companyId?: string;
       search?: string;
     }
-  ): Promise<{ deals: Deal[]; total: number }>;
+  ): Promise<{ deals: Deal[]; total: number; page: number; limit: number }>;
 
-  /**
-   * Create deal inside a transaction (used for lead conversion)
-   */
   createTx(
     tx: Prisma.TransactionClient,
     data: {

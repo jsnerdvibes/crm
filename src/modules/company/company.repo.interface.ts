@@ -1,32 +1,16 @@
 import { Company } from '../../core/db';
+import { IBaseRepository } from '../../core/base.repository';
 
-export interface ICompanyRepository {
-  create(
-    tenantId: string,
-    data: {
-      name: string;
-      website?: string | null;
-      phone?: string | null;
-      address?: string | null;
-    }
-  ): Promise<Company>;
+export interface CreateCompanyInput {
+  name: string;
+  website?: string | null;
+  phone?: string | null;
+  address?: string | null;
+}
 
-  findById(tenantId: string, companyId: string): Promise<Company | null>;
+export type UpdateCompanyInput = Partial<CreateCompanyInput>;
 
+export interface ICompanyRepository extends IBaseRepository<Company, CreateCompanyInput, UpdateCompanyInput> {
   findAll(tenantId: string): Promise<Company[]>;
-
   findByName(tenantId: string, name: string): Promise<Company | null>;
-
-  update(
-    tenantId: string,
-    companyId: string,
-    data: Partial<{
-      name: string;
-      website?: string | null;
-      phone?: string | null;
-      address?: string | null;
-    }>
-  ): Promise<Company>;
-
-  delete(tenantId: string, companyId: string): Promise<void>;
 }

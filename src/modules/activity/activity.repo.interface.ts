@@ -1,40 +1,8 @@
 import { Activity } from '../../core/db';
 import { CreateActivityDTO, UpdateActivityDTO } from './dto';
+import { IBaseRepository } from '../../core/base.repository';
 
-export interface IActivitiesRepository {
-  /**
-   * Create a new activity for a tenant
-   * actorId will be injected from auth middleware
-   */
-  create(
-    tenantId: string,
-    actorId: string | null,
-    data: CreateActivityDTO
-  ): Promise<Activity>;
-
-  /**
-   * Find an activity by ID within a tenant
-   */
-  findById(tenantId: string, activityId: string): Promise<Activity | null>;
-
-  /**
-   * Update an existing activity
-   */
-  update(
-    tenantId: string,
-    activityId: string,
-    data: UpdateActivityDTO
-  ): Promise<Activity>;
-
-  /**
-   * Delete an activity
-   */
-  delete(tenantId: string, activityId: string): Promise<void>;
-
-  /**
-   * Get activities (timeline)
-   * Supports polymorphic filters
-   */
+export interface IActivitiesRepository extends IBaseRepository<Activity, CreateActivityDTO & { actorId?: string | null }, UpdateActivityDTO> {
   getActivities(
     tenantId: string,
     filters: {
