@@ -16,7 +16,12 @@ const options = {
         },
         servers: [
             {
+                url: '/',
+                description: 'Dynamic Server Host (relative)',
+            },
+            {
                 url: `http://localhost:${config_1.config.app.port}`,
+                description: 'Local Server Host',
             },
         ],
         security: [

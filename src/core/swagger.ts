@@ -14,7 +14,12 @@ const options: swaggerJsdoc.Options = {
 
     servers: [
       {
+        url: '/',
+        description: 'Dynamic Server Host (relative)',
+      },
+      {
         url: `http://localhost:${config.app.port}`,
+        description: 'Local Server Host',
       },
     ],
 
